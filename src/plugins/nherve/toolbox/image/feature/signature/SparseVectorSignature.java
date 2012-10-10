@@ -31,7 +31,7 @@ import java.util.TreeMap;
 public class SparseVectorSignature extends VectorSignature  {
 	
 	/** The size. */
-	private int size;
+	protected int size;
 	
 	/** The data. */
 	private Map<Integer, Double> data;
