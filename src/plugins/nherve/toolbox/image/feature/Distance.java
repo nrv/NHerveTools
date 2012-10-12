@@ -1,6 +1,6 @@
 /*
  * Copyright 2010, 2011 Institut Pasteur.
- * Copyright 2012 Nicolas HERVE.
+ * Copyright 2012 Institut National de l'Audiovisuel.
  * 
  * This file is part of NHerveTools.
  * 
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with NHerve Main Toolbox. If not, see <http://www.gnu.org/licenses/>.
+ * along with NHerveTools. If not, see <http://www.gnu.org/licenses/>.
  */
 package plugins.nherve.toolbox.image.feature;
 
@@ -25,7 +25,7 @@ package plugins.nherve.toolbox.image.feature;
  * 
  * @param <T>
  *            the generic type
- * @author Nicolas HERVE - nicolas.herve@pasteur.fr
+ * @author Nicolas HERVE - nherve@ina.fr
  */
 public interface Distance<T> {
 	

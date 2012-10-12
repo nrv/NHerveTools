@@ -17,54 +17,59 @@
  * You should have received a copy of the GNU General Public License
  * along with NHerveTools. If not, see <http://www.gnu.org/licenses/>.
  */
-package plugins.nherve.toolbox.image.feature;
+package plugins.nherve.toolbox.concurrent;
+
+import java.util.List;
+import java.util.concurrent.Callable;
 
 /**
- * The Class FeatureException.
+ * The Class SingleDataTask.
  * 
+ * @param <Input>
+ *            the generic type
+ * @param <Output>
+ *            the generic type
  * @author Nicolas HERVE - nherve@ina.fr
  */
-public class FeatureException extends Exception {
-
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 7211467602505697543L;
-
+public abstract class SingleDataTask<Input, Output> implements Callable<Output> {
+	
+	/** The data. */
+	private Input data;
+	
+	/** The idx. */
+	private int idx;
+	
 	/**
-	 * Instantiates a new feature exception.
+	 * Instantiates a new single data task.
+	 * 
+	 * @param allData
+	 *            the all data
+	 * @param idx
+	 *            the idx
 	 */
-	public FeatureException() {
+	public SingleDataTask(List<Input> allData, int idx) {
+		super();
+		
+		this.data = allData.get(idx);
+		this.idx = idx;
 	}
 
 	/**
-	 * Instantiates a new feature exception.
+	 * Gets the data.
 	 * 
-	 * @param message
-	 *            the message
+	 * @return the data
 	 */
-	public FeatureException(String message) {
-		super(message);
+	public Input getData() {
+		return data;
 	}
 
 	/**
-	 * Instantiates a new feature exception.
+	 * Gets the idx.
 	 * 
-	 * @param cause
-	 *            the cause
+	 * @return the idx
 	 */
-	public FeatureException(Throwable cause) {
-		super(cause);
-	}
-
-	/**
-	 * Instantiates a new feature exception.
-	 * 
-	 * @param message
-	 *            the message
-	 * @param cause
-	 *            the cause
-	 */
-	public FeatureException(String message, Throwable cause) {
-		super(message, cause);
+	public int getIdx() {
+		return idx;
 	}
 
 }

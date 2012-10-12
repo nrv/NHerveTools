@@ -17,53 +17,53 @@
  * You should have received a copy of the GNU General Public License
  * along with NHerveTools. If not, see <http://www.gnu.org/licenses/>.
  */
-package plugins.nherve.toolbox.image.feature;
+package plugins.nherve.toolbox.concurrent;
 
 /**
- * The Class FeatureException.
+ * The Class TaskException.
  * 
  * @author Nicolas HERVE - nherve@ina.fr
  */
-public class FeatureException extends Exception {
+public class TaskException extends Exception {
 
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 7211467602505697543L;
+	private static final long serialVersionUID = 3450113020103536010L;
 
 	/**
-	 * Instantiates a new feature exception.
+	 * Instantiates a new task exception.
 	 */
-	public FeatureException() {
+	public TaskException() {
 	}
 
 	/**
-	 * Instantiates a new feature exception.
+	 * Instantiates a new task exception.
 	 * 
 	 * @param message
 	 *            the message
 	 */
-	public FeatureException(String message) {
+	public TaskException(String message) {
 		super(message);
 	}
 
 	/**
-	 * Instantiates a new feature exception.
+	 * Instantiates a new task exception.
 	 * 
 	 * @param cause
 	 *            the cause
 	 */
-	public FeatureException(Throwable cause) {
+	public TaskException(Throwable cause) {
 		super(cause);
 	}
 
 	/**
-	 * Instantiates a new feature exception.
+	 * Instantiates a new task exception.
 	 * 
 	 * @param message
 	 *            the message
 	 * @param cause
 	 *            the cause
 	 */
-	public FeatureException(String message, Throwable cause) {
+	public TaskException(String message, Throwable cause) {
 		super(message, cause);
 	}
 
