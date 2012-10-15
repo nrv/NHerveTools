@@ -50,27 +50,27 @@ import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 public class PersistenceToolbox {
 	
 	/** The Constant INT_NB_BYTES. */
-	private final static int INT_NB_BYTES = 4;
+	public final static int INT_NB_BYTES = 4;
 	
-	private final static int LONG_NB_BYTES = 8;
+	public final static int LONG_NB_BYTES = 8;
 	
 	/** The Constant DOUBLE_NB_BYTES. */
-	private final static int DOUBLE_NB_BYTES = 8;
+	public final static int DOUBLE_NB_BYTES = 8;
 	
 	/** The Constant FLOAT_NB_BYTES. */
-	private final static int FLOAT_NB_BYTES = 4;
+	public final static int FLOAT_NB_BYTES = 4;
 	
 	/** The Constant DENSE_TYPE. */
-	private final static int DENSE_TYPE = 0;
+	public final static int DENSE_TYPE = 0;
 	
 	/** The Constant SPARSE_TYPE. */
-	private final static int SPARSE_TYPE = 1;
+	public final static int SPARSE_TYPE = 1;
 	
 	/** The Constant BAG_TYPE. */
-	private final static int BAG_TYPE = 2;
+	public final static int BAG_TYPE = 2;
 	
 	/** The Constant BAG_TYPE. */
-	private final static int NULL_TYPE = 3;
+	public final static int NULL_TYPE = 3;
 
 	/** The Constant cs. */
 	private final static Charset cs = Charset.forName("UTF-8");
@@ -324,6 +324,7 @@ public class PersistenceToolbox {
 			if (f.exists()) {
 				f.delete();
 			}
+			f.getParentFile().mkdirs();
 			return new RandomAccessFile(f, "rw");
 		} else {
 			return new RandomAccessFile(f, "r");

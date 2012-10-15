@@ -34,23 +34,12 @@ public abstract class VectorSignature implements Signature, Iterable<Integer> {
 	/** The Constant DENSE_VECTOR_SIGNATURE. */
 	public final static int DENSE_VECTOR_SIGNATURE = 1;
 	
-	/** The Constant SPARSE_VECTOR_SIGNATURE. */
-	public final static int SPARSE_VECTOR_SIGNATURE = 2;
-
 	/** The Constant df. */
 	private final static DecimalFormat df = new DecimalFormat("0.000");
+
+	/** The Constant SPARSE_VECTOR_SIGNATURE. */
+	public final static int SPARSE_VECTOR_SIGNATURE = 2;
 	
-	/** The additional information. */
-	private Object additionalInformation;
-
-	/**
-	 * Instantiates a new vector signature.
-	 */
-	public VectorSignature() {
-		super();
-		setAdditionalInformation(null);
-	}
-
 	/**
 	 * Gets the empty signature.
 	 * 
@@ -69,6 +58,17 @@ public abstract class VectorSignature implements Signature, Iterable<Integer> {
 		default:
 			return null;
 		}
+	}
+
+	/** The additional information. */
+	private Object additionalInformation;
+
+	/**
+	 * Instantiates a new vector signature.
+	 */
+	public VectorSignature() {
+		super();
+		setAdditionalInformation(null);
 	}
 
 	/**
@@ -121,6 +121,16 @@ public abstract class VectorSignature implements Signature, Iterable<Integer> {
 	public abstract VectorSignature clone() throws CloneNotSupportedException;
 
 	/**
+	 * Concat.
+	 * 
+	 * @param other
+	 *            the other
+	 * @throws SignatureException
+	 *             the signature exception
+	 */
+	public abstract void concat(VectorSignature other) throws SignatureException;
+
+	/**
 	 * Gets the.
 	 * 
 	 * @param idx
@@ -148,7 +158,7 @@ public abstract class VectorSignature implements Signature, Iterable<Integer> {
 	 *             the signature exception
 	 */
 	public abstract int getNonZeroBins() throws SignatureException;
-
+	
 	/**
 	 * Gets the size.
 	 * 
@@ -184,6 +194,21 @@ public abstract class VectorSignature implements Signature, Iterable<Integer> {
 		set(idx, get(idx) * coef);
 	}
 
+	public void normalizeL2(boolean force) throws SignatureException {
+		double norm = 0;
+		for (int d = 0; d < getSize(); d++) {
+			double v = get(d);
+			norm += v * v;
+		}
+		norm = Math.sqrt(norm);
+		
+		if (norm != 0.0) {
+			multiply(1.0 / norm);
+		} else if (force) {
+			setAll(1.0 / getSize());
+		}
+	}
+
 	/**
 	 * Normalize sum to.
 	 * 
@@ -203,7 +228,7 @@ public abstract class VectorSignature implements Signature, Iterable<Integer> {
 			setAll(n / getSize());
 		}
 	}
-
+	
 	/**
 	 * Normalize sum to one.
 	 * 
@@ -229,16 +254,6 @@ public abstract class VectorSignature implements Signature, Iterable<Integer> {
 	public abstract void set(int idx, double val) throws SignatureException;
 
 	/**
-	 * Concat.
-	 * 
-	 * @param other
-	 *            the other
-	 * @throws SignatureException
-	 *             the signature exception
-	 */
-	public abstract void concat(VectorSignature other) throws SignatureException;
-
-	/**
 	 * Sets the additional information.
 	 * 
 	 * @param additionalInformation
@@ -261,6 +276,8 @@ public abstract class VectorSignature implements Signature, Iterable<Integer> {
 			set(d, val);
 		}
 	}
+
+	public abstract void setSize(int s);
 
 	/**
 	 * Sum.

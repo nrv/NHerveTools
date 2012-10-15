@@ -31,14 +31,9 @@ public class DynamicSparseVectorSignature extends SparseVectorSignature {
 
 	@Override
 	public void set(int idx, double val) throws SignatureException {
-		if (idx >= size) {
-			size = idx + 1;
+		if (idx >= getSize()) {
+			setSize(idx + 1);
 		}
 		super.set(idx, val);
 	}
-	
-	public void setSize(int s) {
-		size = s;
-	}
-
 }

@@ -107,6 +107,12 @@ public class L1Distance extends SignatureDistance<VectorSignature> {
 
 			return sum;
 
+		} else if (vs1 instanceof DenseVectorSignature && vs2 instanceof DenseVectorSignature) {
+			double[] s1 = ((DenseVectorSignature)vs1).getData();
+			double[] s2 = ((DenseVectorSignature)vs2).getData();
+			for (int dim = 0; dim < s1.length; dim++) {
+				sum += Math.abs(s1[dim] - s2[dim]);
+			}
 		} else {
 			for (int dim = 0; dim < vs1.getSize(); dim++) {
 				double e = vs1.get(dim) - vs2.get(dim);

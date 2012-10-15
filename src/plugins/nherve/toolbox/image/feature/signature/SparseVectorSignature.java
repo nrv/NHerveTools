@@ -31,7 +31,7 @@ import java.util.TreeMap;
 public class SparseVectorSignature extends VectorSignature  {
 	
 	/** The size. */
-	protected int size;
+	private int size;
 	
 	/** The data. */
 	private Map<Integer, Double> data;
@@ -149,6 +149,11 @@ public class SparseVectorSignature extends VectorSignature  {
 	@Override
 	public Iterator<Integer> iterator() {
 		return data.keySet().iterator();
+	}
+	
+	@Override
+	public void setSize(int s) {
+		size = s;
 	}
 
 }
