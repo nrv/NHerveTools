@@ -1,5 +1,4 @@
 /*
- * Copyright 2010, 2011 Institut Pasteur.
  * Copyright 2012 Institut National de l'Audiovisuel.
  * 
  * This file is part of NHerveTools.
@@ -24,38 +23,29 @@ import java.util.Iterator;
 import plugins.nherve.toolbox.image.feature.SignatureDistance;
 
 /**
- * The Class L1Distance.
+ * The Class VectorAngleDistance.
  * 
  * @author Nicolas HERVE - nherve@ina.fr
  */
-public class L1Distance extends SignatureDistance<VectorSignature> {
+public class VectorAngleDistance extends SignatureDistance<VectorSignature> {
 
-	/**
-	 * Instantiates a new l1 distance.
-	 */
-	public L1Distance() {
+	public VectorAngleDistance() {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * plugins.nherve.toolbox.image.feature.SignatureDistance#computeDistance
-	 * (plugins.nherve.toolbox.image.feature.Signature,
-	 * plugins.nherve.toolbox.image.feature.Signature)
-	 */
 	@Override
 	public double computeDistance(VectorSignature vs1, VectorSignature vs2) throws SignatureException {
 		if ((vs1 == null) || (vs2 == null)) {
-			throw new SignatureException("Null signature in L1Distance.compute()");
+			throw new SignatureException("Null signature in VectorAngleDistance.compute()");
 		}
 
 		if (vs1.getSize() != vs2.getSize()) {
 			throw new SignatureException("VectorSignature dimensions mismatch");
 		}
 
-		double sum = 0.0;
+		double dist = 0.0;
+		double sqsum1 = 0.0;
+		double sqsum2 = 0.0;
 
 		if (vs1 instanceof SparseVectorSignature && vs2 instanceof SparseVectorSignature) {
 			SparseVectorSignature s1 = (SparseVectorSignature) vs1;
@@ -75,28 +65,38 @@ public class L1Distance extends SignatureDistance<VectorSignature> {
 				idx2 = idx2it.next();
 			}
 
+			double v1 = 0;
+			double v2 = 0;
 			while ((idx1 < Integer.MAX_VALUE) || (idx2 < Integer.MAX_VALUE)) {
 				if (idx1 == idx2) {
-					sum += Math.abs(s1.get(idx1) - s2.get(idx2));
+					v1 = s1.get(idx1);
+					v2 = s2.get(idx2);
+					dist += v1 * v2;
+					sqsum1 += v1 * v1;
+					sqsum2 += v2 * v2;
+
 					if (idx1it.hasNext()) {
 						idx1 = idx1it.next();
 					} else {
 						idx1 = Integer.MAX_VALUE;
 					}
+
 					if (idx2it.hasNext()) {
 						idx2 = idx2it.next();
 					} else {
 						idx2 = Integer.MAX_VALUE;
 					}
 				} else if (idx1 > idx2) {
-					sum += Math.abs(s2.get(idx2));
+					v2 = s2.get(idx2);
+					sqsum2 += v2 * v2;
 					if (idx2it.hasNext()) {
 						idx2 = idx2it.next();
 					} else {
 						idx2 = Integer.MAX_VALUE;
 					}
 				} else {
-					sum += Math.abs(s1.get(idx1));
+					v1 = s1.get(idx1);
+					sqsum1 += v1 * v1;
 					if (idx1it.hasNext()) {
 						idx1 = idx1it.next();
 					} else {
@@ -104,20 +104,42 @@ public class L1Distance extends SignatureDistance<VectorSignature> {
 					}
 				}
 			}
+
 		} else if (vs1 instanceof DenseVectorSignature && vs2 instanceof DenseVectorSignature) {
-			double[] s1 = ((DenseVectorSignature)vs1).getData();
-			double[] s2 = ((DenseVectorSignature)vs2).getData();
-			for (int dim = 0; dim < s1.length; dim++) {
-				sum += Math.abs(s1[dim] - s2[dim]);
+			double[] s1 = ((DenseVectorSignature) vs1).getData();
+			double[] s2 = ((DenseVectorSignature) vs2).getData();
+
+			for (int i = 0; i < s1.length; i++) {
+				dist += s1[i] * s2[i];
+				sqsum1 += s1[i] * s1[i];
+				sqsum2 += s2[i] * s2[i];
 			}
 		} else {
-			for (int dim = 0; dim < vs1.getSize(); dim++) {
-				double e = vs1.get(dim) - vs2.get(dim);
-				sum += Math.abs(e);
+			double v1 = 0;
+			double v2 = 0;
+			for (int i = 0; i < vs1.getSize(); i++) {
+				v1 = vs1.get(i);
+				v2 = vs2.get(i);
+				dist += v1 * v2;
+				sqsum1 += v1 * v1;
+				sqsum2 += v2 * v2;
 			}
 		}
 
-		return sum;
+		double sq = Math.sqrt(sqsum1 * sqsum2);
+
+		if ((sq == 0.) || (dist == 0.)) {
+			dist = 2.;
+		} else {
+			double r = dist / sq;
+			if (r > 1) {
+				dist = 0;
+			} else {
+				dist = Math.acos(r);
+			}
+		}
+
+		return dist;
 	}
 
 }
