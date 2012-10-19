@@ -37,6 +37,7 @@ import java.nio.charset.CharsetEncoder;
 import plugins.nherve.toolbox.image.feature.Signature;
 import plugins.nherve.toolbox.image.feature.signature.BagOfSignatures;
 import plugins.nherve.toolbox.image.feature.signature.DenseVectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.IndexSignature;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.SparseVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
@@ -49,10 +50,20 @@ import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
  */
 public class PersistenceToolbox {
 	
-	/** The Constant INT_NB_BYTES. */
-	public final static int INT_NB_BYTES = 4;
+	/** The Constant BAG_TYPE. */
+	public final static int BAG_TYPE = 2;
 	
-	public final static int LONG_NB_BYTES = 8;
+	/** The Constant cs. */
+	private final static Charset cs = Charset.forName("UTF-8");
+	
+	/** The Constant csd. */
+	private final static CharsetDecoder csd = cs.newDecoder();
+	
+	/** The Constant cse. */
+	private final static CharsetEncoder cse = cs.newEncoder();
+	
+	/** The Constant DENSE_TYPE. */
+	public final static int DENSE_TYPE = 0;
 	
 	/** The Constant DOUBLE_NB_BYTES. */
 	public final static int DOUBLE_NB_BYTES = 8;
@@ -60,26 +71,18 @@ public class PersistenceToolbox {
 	/** The Constant FLOAT_NB_BYTES. */
 	public final static int FLOAT_NB_BYTES = 4;
 	
-	/** The Constant DENSE_TYPE. */
-	public final static int DENSE_TYPE = 0;
+	public final static int INDEX_TYPE = 4;
+	
+	/** The Constant INT_NB_BYTES. */
+	public final static int INT_NB_BYTES = 4;
+
+	public final static int LONG_NB_BYTES = 8;
+	
+	/** The Constant BAG_TYPE. */
+	public final static int NULL_TYPE = 3;;
 	
 	/** The Constant SPARSE_TYPE. */
-	public final static int SPARSE_TYPE = 1;
-	
-	/** The Constant BAG_TYPE. */
-	public final static int BAG_TYPE = 2;
-	
-	/** The Constant BAG_TYPE. */
-	public final static int NULL_TYPE = 3;
-
-	/** The Constant cs. */
-	private final static Charset cs = Charset.forName("UTF-8");
-	
-	/** The Constant cse. */
-	private final static CharsetEncoder cse = cs.newEncoder();;
-	
-	/** The Constant csd. */
-	private final static CharsetDecoder csd = cs.newDecoder();;
+	public final static int SPARSE_TYPE = 1;;
 
 	/**
 	 * Dump bag of signatures.
@@ -98,6 +101,24 @@ public class PersistenceToolbox {
 		}
 	}
 
+	/**
+	 * Dump boolean.
+	 * 
+	 * @param fc
+	 *            the fc
+	 * @param b
+	 *            the b
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public static void dumpBoolean(FileChannel fc, boolean b) throws IOException {
+		if (b) {
+			dumpInt(fc, 1);
+		} else {
+			dumpInt(fc, 0);
+		}
+	}
+	
 	/**
 	 * Dump dense vector signature.
 	 * 
@@ -153,22 +174,13 @@ public class PersistenceToolbox {
 		fc.write(bb);
 	}
 	
-	/**
-	 * Dump boolean.
-	 * 
-	 * @param fc
-	 *            the fc
-	 * @param b
-	 *            the b
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	public static void dumpBoolean(FileChannel fc, boolean b) throws IOException {
-		if (b) {
-			dumpInt(fc, 1);
-		} else {
-			dumpInt(fc, 0);
-		}
+	public static void dumpIndexSignature(FileChannel fc, IndexSignature s) throws IOException {
+		dumpInt(fc, s.getSize());
+		ByteBuffer bb = ByteBuffer.allocate(INT_NB_BYTES * s.getSize());
+		IntBuffer db = bb.asIntBuffer();
+		db.put(s.getData());
+		db.flip();
+		fc.write(bb);
 	}
 
 	/**
@@ -189,15 +201,6 @@ public class PersistenceToolbox {
 		fc.write(bb);
 	}
 	
-	public static void dumpLong(FileChannel fc, long l) throws IOException {
-		ByteBuffer bb = ByteBuffer.allocate(LONG_NB_BYTES);
-		LongBuffer lb = bb.asLongBuffer();
-		lb.put(l);
-		lb.flip();
-		fc.write(bb);
-	}
-		
-	
 	/**
 	 * Dump int array.
 	 * 
@@ -213,6 +216,15 @@ public class PersistenceToolbox {
 		IntBuffer ib = bb.asIntBuffer();
 		ib.put(i);
 		ib.flip();
+		fc.write(bb);
+	}
+		
+	
+	public static void dumpLong(FileChannel fc, long l) throws IOException {
+		ByteBuffer bb = ByteBuffer.allocate(LONG_NB_BYTES);
+		LongBuffer lb = bb.asLongBuffer();
+		lb.put(l);
+		lb.flip();
 		fc.write(bb);
 	}
 
@@ -233,6 +245,9 @@ public class PersistenceToolbox {
 		} else if (s instanceof DenseVectorSignature) {
 			dumpInt(fc, DENSE_TYPE);
 			dumpDenseVectorSignature(fc, (DenseVectorSignature) s);
+		} else if (s instanceof IndexSignature) {
+			dumpInt(fc, INDEX_TYPE);
+			dumpIndexSignature(fc, (IndexSignature) s);
 		} else if (s instanceof SparseVectorSignature) {
 			dumpInt(fc, SPARSE_TYPE);
 			dumpSparseVectorSignature(fc, (SparseVectorSignature) s);
@@ -262,9 +277,6 @@ public class PersistenceToolbox {
 			double[] d = new double[nzb];
 			int n = 0;
 			for (int c : s) {
-				if (c >= s.getSize()) {
-					System.err.println("WARNING : dumpSparseVectorSignature : c >= s.getSize()");
-				}
 				i[n] = c;
 				d[n] = s.get(c);
 				n++;
@@ -357,6 +369,19 @@ public class PersistenceToolbox {
 	}
 
 	/**
+	 * Load boolean.
+	 * 
+	 * @param fc
+	 *            the fc
+	 * @return true, if successful
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public static boolean loadBoolean(FileChannel fc) throws IOException {
+		return loadInt(fc) == 1;
+	}
+	
+	/**
 	 * Load dense vector signature.
 	 * 
 	 * @param fc
@@ -372,10 +397,7 @@ public class PersistenceToolbox {
 		bb.flip();
 		DoubleBuffer db = bb.asDoubleBuffer();
 		double[] data = new double[sz];
-		db.rewind();
-		while (db.hasRemaining()) {
-			data[db.position()] = db.get();
-		}
+		db.get(data);
 		DenseVectorSignature v = new DenseVectorSignature(data);
 		return v;
 	}
@@ -414,6 +436,18 @@ public class PersistenceToolbox {
 		return db.get();
 	}
 
+	public static IndexSignature loadIndexSignature(FileChannel fc) throws IOException {
+		int sz = loadInt(fc);
+		ByteBuffer bb = ByteBuffer.allocate(INT_NB_BYTES * sz);
+		fc.read(bb);
+		bb.flip();
+		IntBuffer db = bb.asIntBuffer();
+		int[] data = new int[sz];
+		db.get(data);
+		IndexSignature v = new IndexSignature(data);
+		return v;
+	}
+	
 	/**
 	 * Load int.
 	 * 
@@ -437,19 +471,6 @@ public class PersistenceToolbox {
 		bb.flip();
 		LongBuffer ib = bb.asLongBuffer();
 		return ib.get();
-	}
-	
-	/**
-	 * Load boolean.
-	 * 
-	 * @param fc
-	 *            the fc
-	 * @return true, if successful
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	public static boolean loadBoolean(FileChannel fc) throws IOException {
-		return loadInt(fc) == 1;
 	}
 
 	/**

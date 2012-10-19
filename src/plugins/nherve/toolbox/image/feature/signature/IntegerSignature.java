@@ -16,32 +16,27 @@
  * You should have received a copy of the GNU General Public License
  * along with NHerve Main Toolbox. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package plugins.nherve.toolbox.image.feature.signature;
 
- /**
-  * 
-  * @author Nicolas HERVE - nherve@ina.fr
-  */
-public class DynamicSparseVectorSignature extends SparseVectorSignature {
+import plugins.nherve.toolbox.image.feature.Signature;
 
-	public DynamicSparseVectorSignature() {
-		super(0);
+/**
+ * 
+ * @author Nicolas HERVE - nherve@ina.fr
+ */
+public class IntegerSignature implements Signature {
+	private int data;
+	
+	@Override
+	public IntegerSignature clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException("Not yet needed");
 	}
 
-	@Override
-	public void set(int idx, double val) throws SignatureException {
-		if (idx >= getSize()) {
-			setSize(idx + 1);
-		}
-		super.set(idx, val);
+	public int getData() {
+		return data;
 	}
 
-	@Override
-	public void addTo(int idx, double val) throws SignatureException {
-		if (idx >= getSize()) {
-			setSize(idx + 1);
-		}
-		super.addTo(idx, val);
+	public void setData(int data) {
+		this.data = data;
 	}
 }

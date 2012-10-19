@@ -14,34 +14,37 @@
  * GNU General Public License for more details.
  * 
  * You should have received a copy of the GNU General Public License
- * along with NHerve Main Toolbox. If not, see <http://www.gnu.org/licenses/>.
+ * along with NHerveTools. If not, see <http://www.gnu.org/licenses/>.
  */
+package plugins.nherve.toolbox;
 
-package plugins.nherve.toolbox.image.feature.signature;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
- /**
-  * 
-  * @author Nicolas HERVE - nherve@ina.fr
-  */
-public class DynamicSparseVectorSignature extends SparseVectorSignature {
+/**
+ * 
+ * @author Nicolas HERVE - nherve@ina.fr
+ */
+public class ArrayIterator<T> implements Iterator<T> {
+	private T[] array;
+	private int index = 0;
 
-	public DynamicSparseVectorSignature() {
-		super(0);
+	public ArrayIterator(T[] array) {
+		this.array = array;
 	}
 
-	@Override
-	public void set(int idx, double val) throws SignatureException {
-		if (idx >= getSize()) {
-			setSize(idx + 1);
-		}
-		super.set(idx, val);
+	public boolean hasNext() {
+		return (index < array.length);
 	}
 
-	@Override
-	public void addTo(int idx, double val) throws SignatureException {
-		if (idx >= getSize()) {
-			setSize(idx + 1);
-		}
-		super.addTo(idx, val);
+	public T next() throws NoSuchElementException {
+		if (index >= array.length)
+			throw new NoSuchElementException("Array index: " + index);
+		return array[index++];
 	}
+
+	public void remove() {
+		// not implemented
+	}
+
 }
