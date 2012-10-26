@@ -31,18 +31,104 @@ public class DifferentColorsMap {
 	/** The Constant COLORMAP_SIZE. */
 	public final static int COLORMAP_SIZE = 256;
 
+	/** The b. */
+	private float[] b;
+	
+	/** The g. */
+	private float[] g;
+	
 	/** The nb colors. */
 	private int nbColors;
 	
 	/** The r. */
 	private float[] r;
 	
-	/** The g. */
-	private float[] g;
+	/**
+	 * Instantiates a new different colors map.
+	 */
+	public DifferentColorsMap() {
+		this(COLORMAP_SIZE);
+	}
+
+	/**
+	 * Instantiates a new different colors map.
+	 * 
+	 * @param nbColors
+	 *            the nb colors
+	 */
+	public DifferentColorsMap(int nbColors) {
+		this(nbColors, 3);
+	}
 	
-	/** The b. */
-	private float[] b;
+	/**
+	 * Instantiates a new different colors map.
+	 * 
+	 * @param nbColors
+	 *            the nb colors
+	 * @param nbCycles
+	 *            the nb cycles
+	 */
+	public DifferentColorsMap(int nbColors, int nbCycles) {
+		this.nbColors = nbColors;
+		r = new float[nbColors];
+		g = new float[nbColors];
+		b = new float[nbColors];
+		
+		float hue = 0;
+		float dhue = 6f / nbColors;
+		float sat = 1f;
+		float val = 1f;
+		
+		for(int cycle = 0; cycle < nbCycles; cycle++) {
+			if (cycle % 2 == 0) {
+				val = 1f;
+			} else {
+				val = 0.7f;
+			}
+			if (cycle % 3 == 0) {
+				sat = 1f;
+			} else if (cycle % 3 == 1) {
+				sat = 0.8f;
+			} else {
+				sat = 0.6f;
+			}
+			for (int i = cycle * nbColors / nbCycles; i < (cycle + 1) * nbColors / nbCycles; i++) {
+				hue = cycle * dhue + (i - cycle * nbColors / nbCycles) * nbCycles * dhue;
+				toRGB(i, hue, sat, val);
+			}
+		}
+	}
 	
+	/**
+	 * Gets the.
+	 * 
+	 * @param idx
+	 *            the idx
+	 * @return the color
+	 */
+	public Color get(int idx) {
+		// System.out.println(idx + " - r:" + r[idx] + ", g:" + g[idx] + ", b:" + b[idx]);
+		return new Color(r[idx], g[idx], b[idx]);
+	}
+
+	public String getHtml(int idx) {
+		Color c = get(idx);
+		String html = "#";
+		html += Integer.toHexString(c.getRed());
+		html += Integer.toHexString(c.getGreen());
+		html += Integer.toHexString(c.getBlue());
+		return html;
+	}
+	
+	/**
+	 * Gets the nb colors.
+	 * 
+	 * @return the nb colors
+	 */
+	public int getNbColors() {
+		return nbColors;
+	}
+
 	/**
 	 * To rgb.
 	 * 
@@ -99,82 +185,5 @@ public class DifferentColorsMap {
 			b[idx] = c2;
 		}
 		}
-	}
-
-	/**
-	 * Instantiates a new different colors map.
-	 */
-	public DifferentColorsMap() {
-		this(COLORMAP_SIZE);
-	}
-	
-	/**
-	 * Instantiates a new different colors map.
-	 * 
-	 * @param nbColors
-	 *            the nb colors
-	 */
-	public DifferentColorsMap(int nbColors) {
-		this(nbColors, 3);
-	}
-	
-	/**
-	 * Instantiates a new different colors map.
-	 * 
-	 * @param nbColors
-	 *            the nb colors
-	 * @param nbCycles
-	 *            the nb cycles
-	 */
-	public DifferentColorsMap(int nbColors, int nbCycles) {
-		this.nbColors = nbColors;
-		r = new float[nbColors];
-		g = new float[nbColors];
-		b = new float[nbColors];
-		
-		float hue = 0;
-		float dhue = 6f / nbColors;
-		float sat = 1f;
-		float val = 1f;
-		
-		for(int cycle = 0; cycle < nbCycles; cycle++) {
-			if (cycle % 2 == 0) {
-				val = 1f;
-			} else {
-				val = 0.7f;
-			}
-			if (cycle % 3 == 0) {
-				sat = 1f;
-			} else if (cycle % 3 == 1) {
-				sat = 0.8f;
-			} else {
-				sat = 0.6f;
-			}
-			for (int i = cycle * nbColors / nbCycles; i < (cycle + 1) * nbColors / nbCycles; i++) {
-				hue = cycle * dhue + (i - cycle * nbColors / nbCycles) * nbCycles * dhue;
-				toRGB(i, hue, sat, val);
-			}
-		}
-	}
-
-	/**
-	 * Gets the.
-	 * 
-	 * @param idx
-	 *            the idx
-	 * @return the color
-	 */
-	public Color get(int idx) {
-		// System.out.println(idx + " - r:" + r[idx] + ", g:" + g[idx] + ", b:" + b[idx]);
-		return new Color(r[idx], g[idx], b[idx]);
-	}
-
-	/**
-	 * Gets the nb colors.
-	 * 
-	 * @return the nb colors
-	 */
-	public int getNbColors() {
-		return nbColors;
 	}
 }
