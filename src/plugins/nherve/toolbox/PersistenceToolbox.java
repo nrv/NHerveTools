@@ -218,8 +218,55 @@ public class PersistenceToolbox {
 		ib.flip();
 		fc.write(bb);
 	}
-		
 	
+	public static void dumpFullIntArray(FileChannel fc, int[] i) throws IOException {
+		dumpInt(fc, i.length);
+		dumpIntArray(fc, i);
+	}
+	
+	public static int[] loadIntArray(FileChannel fc, int sz) throws IOException {
+		ByteBuffer bb = ByteBuffer.allocate(PersistenceToolbox.INT_NB_BYTES * sz);
+		fc.read(bb);
+		bb.flip();
+		IntBuffer ib = bb.asIntBuffer();
+		int[] res = new int[sz];
+		ib.get(res);
+		return res;
+	}
+	
+	public static int[] loadFullIntArray(FileChannel fc) throws IOException {
+		int sz = loadInt(fc);
+		return loadIntArray(fc, sz);
+	}
+	
+	public static void dumpLongArray(FileChannel fc, long[] i) throws IOException {
+		ByteBuffer bb = ByteBuffer.allocate(i.length * LONG_NB_BYTES);
+		LongBuffer ib = bb.asLongBuffer();
+		ib.put(i);
+		ib.flip();
+		fc.write(bb);
+	}
+	
+	public static void dumpFullLongArray(FileChannel fc, long[] i) throws IOException {
+		dumpInt(fc, i.length);
+		dumpLongArray(fc, i);
+	}
+	
+	public static long[] loadLongArray(FileChannel fc, int sz) throws IOException {
+		ByteBuffer bb = ByteBuffer.allocate(PersistenceToolbox.LONG_NB_BYTES * sz);
+		fc.read(bb);
+		bb.flip();
+		LongBuffer ib = bb.asLongBuffer();
+		long[] res = new long[sz];
+		ib.get(res);
+		return res;
+	}
+	
+	public static long[] loadFullLongArray(FileChannel fc) throws IOException {
+		int sz = loadInt(fc);
+		return loadLongArray(fc, sz);
+	}
+		
 	public static void dumpLong(FileChannel fc, long l) throws IOException {
 		ByteBuffer bb = ByteBuffer.allocate(LONG_NB_BYTES);
 		LongBuffer lb = bb.asLongBuffer();
