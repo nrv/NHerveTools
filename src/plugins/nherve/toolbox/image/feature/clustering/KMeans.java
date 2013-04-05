@@ -216,11 +216,17 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 			do {
 				oldCentroids = centroids;
 				computeCentroids(points, oldCentroids);
+				//log("[It " + iteration + "] computeCentroids done");
 				stab = computeStabilizationCriterion(oldCentroids);
-
+				//log("[It " + iteration + "] computeStabilizationCriterion done");
+				
 				computeAffectation(points);
 
 				log("[It " + iteration + "] " + stab);
+				
+				if (isLogEnabled()) {
+					emptyCluster();
+				}
 
 				iteration++;
 			} while ((iteration < nbMaxIterations) && (stab > stabilizationCriterion));
