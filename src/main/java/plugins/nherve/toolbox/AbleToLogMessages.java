@@ -1,6 +1,6 @@
 /*
  * Copyright 2010, 2011 Institut Pasteur.
- * Copyright 2012 Institut National de l'Audiovisuel.
+ * Copyright 2012, 2013 Institut National de l'Audiovisuel.
  * 
  * This file is part of NHerveTools.
  * 
