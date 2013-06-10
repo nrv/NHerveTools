@@ -60,6 +60,10 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Vect
 	private int nbClasses;
 	private double threshold;
 	
+	private int idx(int i, int j, int n) {
+		return j + i * (2 * n - 1 - i) / 2;
+	}
+	
 	public AgglomerativeClustering(boolean display) {
 		super(display);
 		
@@ -104,6 +108,14 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Vect
 			} catch (ExecutionException e) {
 				throw new ClusteringException(e);
 			}
+		}
+		
+		// log("AgglomerativeClustering - Distances : " + distances.size() + " / " + idx(points.size() - 1, points.size() - 1, points.size()));
+		log("AgglomerativeClustering - Getting distances");
+		int s = points.size();
+		SingleDistance[] dt = new SingleDistance[s * (s + 1) / 2];
+		for (SingleDistance sd : distances) {
+			dt[idx(sd.i, sd.j, s)] = sd; 
 		}
 		
 		log("AgglomerativeClustering - Sorting distances");
