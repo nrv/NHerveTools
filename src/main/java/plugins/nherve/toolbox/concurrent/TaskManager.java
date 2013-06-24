@@ -51,28 +51,12 @@ public class TaskManager extends Algorithm {
 	/** The second level. */
 	private static TaskManager secondLevel;
 
-	/** The thread pool. */
-	private ThreadPoolExecutor threadPool;
-
-	/** The show progress. */
-	private boolean showProgress;
-
-	public TaskManager() {
-		this(DEFAULT_NBT);
+	public static synchronized TaskManager create() {
+		return create(DEFAULT_NBT);
 	}
 
-	/**
-	 * Instantiates a new task manager.
-	 * 
-	 * @param nbt
-	 *            the nbt
-	 */
-	public TaskManager(int nbt) {
-		super();
-		threadPool = (ThreadPoolExecutor) (Executors.newFixedThreadPool(nbt));
-		threadPool.prestartAllCoreThreads();
-
-		setShowProgress(true);
+	public static synchronized TaskManager create(int preferedSize) {
+		return new TaskManager(preferedSize);
 	}
 
 	/**
@@ -82,15 +66,6 @@ public class TaskManager extends Algorithm {
 	 */
 	public static synchronized TaskManager getMainInstance() {
 		return getMainInstance(DEFAULT_NBT);
-	}
-
-	/**
-	 * Gets the second level instance.
-	 * 
-	 * @return the second level instance
-	 */
-	public static synchronized TaskManager getSecondLevelInstance() {
-		return getSecondLevelInstance(DEFAULT_NBT);
 	}
 
 	/**
@@ -108,12 +83,13 @@ public class TaskManager extends Algorithm {
 		return main;
 	}
 
-	public static synchronized TaskManager create(int preferedSize) {
-		return new TaskManager(preferedSize);
-	}
-
-	public static synchronized TaskManager create() {
-		return create(DEFAULT_NBT);
+	/**
+	 * Gets the second level instance.
+	 * 
+	 * @return the second level instance
+	 */
+	public static synchronized TaskManager getSecondLevelInstance() {
+		return getSecondLevelInstance(DEFAULT_NBT);
 	}
 
 	/**
@@ -132,15 +108,12 @@ public class TaskManager extends Algorithm {
 	}
 
 	/**
-	 * Shutdown all.
+	 * Inits the all.
 	 */
-	public static void shutdownAll() {
-		if (main != null) {
-			main.shutdown();
-		}
-		if (secondLevel != null) {
-			secondLevel.shutdown();
-		}
+	public static void initAll() {
+		shutdownAll();
+		getMainInstance();
+		getSecondLevelInstance();
 	}
 
 	/**
@@ -178,12 +151,100 @@ public class TaskManager extends Algorithm {
 	}
 
 	/**
-	 * Inits the all.
+	 * Shutdown all.
 	 */
-	public static void initAll() {
-		shutdownAll();
-		getMainInstance();
-		getSecondLevelInstance();
+	public static void shutdownAll() {
+		if (main != null) {
+			main.shutdown();
+		}
+		if (secondLevel != null) {
+			secondLevel.shutdown();
+		}
+	}
+
+	/** The thread pool. */
+	private ThreadPoolExecutor threadPool;
+
+	/** The show progress. */
+	private boolean showProgress;
+
+	public TaskManager() {
+		this(DEFAULT_NBT);
+	}
+
+	/**
+	 * Instantiates a new task manager.
+	 * 
+	 * @param nbt
+	 *            the nbt
+	 */
+	public TaskManager(int nbt) {
+		super();
+		threadPool = (ThreadPoolExecutor) (Executors.newFixedThreadPool(nbt));
+		threadPool.prestartAllCoreThreads();
+
+		setShowProgress(true);
+	}
+
+	public void execute(Runnable task) {
+		threadPool.execute(task);
+	}
+
+	/**
+	 * Gets the active count.
+	 * 
+	 * @return the active count
+	 */
+	public int getActiveCount() {
+		return threadPool.getActiveCount();
+	}
+
+	/**
+	 * Gets the core pool size.
+	 * 
+	 * @return the core pool size
+	 */
+	public int getCorePoolSize() {
+		return threadPool.getCorePoolSize();
+	}
+
+	public int getQueueSize() {
+		return threadPool.getQueue().size();
+	}
+
+	public <Output> List<Output> getResults(List<Future<Output>> poolResults) throws TaskException, InterruptedException {
+		try {
+			List<Output> results = new ArrayList<Output>();
+			for (Future<Output> tr : poolResults) {
+				results.add(tr.get());
+			}
+			return results;
+		} catch (ExecutionException e) {
+			throw new TaskException(e);
+		}
+	}
+
+	/**
+	 * Checks if is show progress.
+	 * 
+	 * @return true, if is show progress
+	 */
+	public boolean isShowProgress() {
+		return showProgress;
+	}
+
+	public boolean remove(Runnable task) {
+		return threadPool.remove(task);
+	}
+
+	/**
+	 * Sets the show progress.
+	 * 
+	 * @param showProgress
+	 *            the new show progress
+	 */
+	public void setShowProgress(boolean showProgress) {
+		this.showProgress = showProgress;
 	}
 
 	/**
@@ -201,6 +262,10 @@ public class TaskManager extends Algorithm {
 				secondLevel = null;
 			}
 		}
+	}
+
+	public List<Runnable> shutdownNow() {
+		return threadPool.shutdownNow();
 	}
 
 	/**
@@ -238,65 +303,6 @@ public class TaskManager extends Algorithm {
 	public <Output> List<Output> submitAndWait(List<Callable<Output>> tasks, long slp) throws TaskException, InterruptedException {
 		List<Future<Output>> poolResults = submitAll(tasks);
 		return waitResults(poolResults, "", slp);
-	}
-
-	/**
-	 * Submit single for all.
-	 * 
-	 * @param <Input>
-	 *            the generic type
-	 * @param <Output>
-	 *            the generic type
-	 * @param allDatas
-	 *            the all datas
-	 * @param method
-	 *            the method
-	 * @param msg
-	 *            the msg
-	 * @param slp
-	 *            the slp
-	 * @return the list
-	 * @throws TaskException
-	 *             the task exception
-	 * @throws InterruptedException
-	 */
-	public <Input, Output> List<Output> submitSingleForAll(List<Input> allDatas, Class<? extends SingleDataTask<Input, Output>> method, Object from, String msg, long slp) throws TaskException, InterruptedException {
-		try {
-			Constructor<? extends SingleDataTask<Input, Output>> cst = null;
-			Class<?> dc = method.getDeclaringClass();
-			if (dc != null) {
-				cst = method.getConstructor(new Class[] { dc, List.class, int.class });
-			} else {
-				cst = method.getConstructor(new Class[] { List.class, int.class });
-			}
-
-			List<Callable<Output>> tasks = new ArrayList<Callable<Output>>();
-			for (int i = 0; i < allDatas.size(); i++) {
-				SingleDataTask<Input, Output> task = null;
-				if (dc != null) {
-					task = cst.newInstance(new Object[] { from, allDatas, i });
-				} else {
-					task = cst.newInstance(new Object[] { allDatas, i });
-				}
-				tasks.add(task);
-			}
-
-			List<Future<Output>> poolResults = submitAll(tasks);
-
-			return waitResults(poolResults, msg, slp);
-		} catch (SecurityException e) {
-			throw new TaskException(e);
-		} catch (IllegalArgumentException e) {
-			throw new TaskException(e);
-		} catch (NoSuchMethodException e) {
-			throw new TaskException(e);
-		} catch (InstantiationException e) {
-			throw new TaskException(e);
-		} catch (IllegalAccessException e) {
-			throw new TaskException(e);
-		} catch (InvocationTargetException e) {
-			throw new TaskException(e);
-		}
 	}
 
 	/**
@@ -399,65 +405,60 @@ public class TaskManager extends Algorithm {
 	}
 
 	/**
-	 * Wait results.
+	 * Submit single for all.
 	 * 
-	 * @param <Key>
+	 * @param <Input>
 	 *            the generic type
 	 * @param <Output>
 	 *            the generic type
-	 * @param poolResults
-	 *            the pool results
+	 * @param allDatas
+	 *            the all datas
+	 * @param method
+	 *            the method
 	 * @param msg
 	 *            the msg
 	 * @param slp
 	 *            the slp
-	 * @return the map
+	 * @return the list
 	 * @throws TaskException
 	 *             the task exception
+	 * @throws InterruptedException
 	 */
-	public <Key, Output> Map<Key, Output> waitResults(Map<Key, Future<Output>> poolResults, String msg, long slp) throws TaskException {
+	public <Input, Output> List<Output> submitSingleForAll(List<Input> allDatas, Class<? extends SingleDataTask<Input, Output>> method, Object from, String msg, long slp) throws TaskException, InterruptedException {
 		try {
-			Map<Key, Output> results = new TreeMap<Key, Output>();
-			if (slp > 0) {
-				if (isShowProgress()) {
-					outWithTime("Launched ...");
-				}
+			Constructor<? extends SingleDataTask<Input, Output>> cst = null;
+			Class<?> dc = method.getDeclaringClass();
+			if (dc != null) {
+				cst = method.getConstructor(new Class[] { dc, List.class, int.class });
+			} else {
+				cst = method.getConstructor(new Class[] { List.class, int.class });
 			}
-			DecimalFormat cf = new DecimalFormat("00");
-			boolean finished = false;
-			do {
-				int count = 0;
-				for (Future<Output> tr : poolResults.values()) {
-					if (tr.isDone()) {
-						count++;
-					}
-				}
-				if (count == poolResults.size()) {
-					finished = true;
+
+			List<Callable<Output>> tasks = new ArrayList<Callable<Output>>();
+			for (int i = 0; i < allDatas.size(); i++) {
+				SingleDataTask<Input, Output> task = null;
+				if (dc != null) {
+					task = cst.newInstance(new Object[] { from, allDatas, i });
 				} else {
-					if (slp > 0) {
-						double pct = count * 100d / poolResults.size();
-						if (isShowProgress()) {
-							outWithTime(" - working (" + msg + ") : " + cf.format(pct) + " %");
-						}
-						Thread.sleep(slp);
-					}
+					task = cst.newInstance(new Object[] { allDatas, i });
 				}
-			} while (!finished);
-
-			for (Key key : poolResults.keySet()) {
-				results.put(key, poolResults.get(key).get());
-			}
-			if (slp > 0) {
-				if (isShowProgress()) {
-					outWithTime("... done");
-				}
+				tasks.add(task);
 			}
 
-			return results;
-		} catch (InterruptedException e) {
+			List<Future<Output>> poolResults = submitAll(tasks);
+
+			return waitResults(poolResults, msg, slp);
+		} catch (SecurityException e) {
 			throw new TaskException(e);
-		} catch (ExecutionException e) {
+		} catch (IllegalArgumentException e) {
+			throw new TaskException(e);
+		} catch (NoSuchMethodException e) {
+			throw new TaskException(e);
+		} catch (InstantiationException e) {
+			throw new TaskException(e);
+		} catch (IllegalAccessException e) {
+			throw new TaskException(e);
+		} catch (InvocationTargetException e) {
 			throw new TaskException(e);
 		}
 	}
@@ -469,6 +470,68 @@ public class TaskManager extends Algorithm {
 				Thread.sleep(slp);
 			}
 			return tr.get();
+		} catch (InterruptedException e) {
+			throw new TaskException(e);
+		} catch (ExecutionException e) {
+			throw new TaskException(e);
+		}
+	}
+
+	/**
+	 * Wait result lists.
+	 * 
+	 * @param <Output>
+	 *            the generic type
+	 * @param poolResults
+	 *            the pool results
+	 * @param msg
+	 *            the msg
+	 * @param slp
+	 *            the slp
+	 * @return the list
+	 * @throws TaskException
+	 *             the task exception
+	 */
+	public <Output> List<Output> waitResultLists(List<Future<List<Output>>> poolResults, String msg, long slp) throws TaskException {
+		try {
+			List<Output> results = new ArrayList<Output>();
+			if (slp > 0) {
+				if (isShowProgress()) {
+					outWithTime("Launched ...");
+				}
+			}
+			DecimalFormat cf = new DecimalFormat("00");
+			boolean finished = false;
+			do {
+				int count = 0;
+				for (Future<List<Output>> tr : poolResults) {
+					if (tr.isDone()) {
+						count++;
+					}
+				}
+				if (count == poolResults.size()) {
+					finished = true;
+				} else {
+					if (slp > 0) {
+						double pct = (count * 100d) / poolResults.size();
+						if (isShowProgress()) {
+							outWithTime(" - working (" + msg + ") : " + cf.format(pct) + " %");
+						}
+						Thread.sleep(slp);
+					}
+				}
+			} while (!finished);
+
+			for (Future<List<Output>> tr : poolResults) {
+				results.addAll(tr.get());
+			}
+			if (slp > 0) {
+				if (isShowProgress()) {
+					outWithTime("... done");
+				}
+			}
+
+			return results;
 		} catch (InterruptedException e) {
 			throw new TaskException(e);
 		} catch (ExecutionException e) {
@@ -513,7 +576,7 @@ public class TaskManager extends Algorithm {
 					finished = true;
 				} else {
 					if (slp > 0) {
-						double pct = count * 100d / poolResults.size();
+						double pct = (count * 100d) / poolResults.size();
 						if (isShowProgress()) {
 							outWithTime(" - working (" + msg + ") : " + cf.format(pct) + " %");
 						}
@@ -538,8 +601,10 @@ public class TaskManager extends Algorithm {
 	}
 
 	/**
-	 * Wait result lists.
+	 * Wait results.
 	 * 
+	 * @param <Key>
+	 *            the generic type
 	 * @param <Output>
 	 *            the generic type
 	 * @param poolResults
@@ -548,13 +613,13 @@ public class TaskManager extends Algorithm {
 	 *            the msg
 	 * @param slp
 	 *            the slp
-	 * @return the list
+	 * @return the map
 	 * @throws TaskException
 	 *             the task exception
 	 */
-	public <Output> List<Output> waitResultLists(List<Future<List<Output>>> poolResults, String msg, long slp) throws TaskException {
+	public <Key, Output> Map<Key, Output> waitResults(Map<Key, Future<Output>> poolResults, String msg, long slp) throws TaskException {
 		try {
-			List<Output> results = new ArrayList<Output>();
+			Map<Key, Output> results = new TreeMap<Key, Output>();
 			if (slp > 0) {
 				if (isShowProgress()) {
 					outWithTime("Launched ...");
@@ -564,7 +629,7 @@ public class TaskManager extends Algorithm {
 			boolean finished = false;
 			do {
 				int count = 0;
-				for (Future<List<Output>> tr : poolResults) {
+				for (Future<Output> tr : poolResults.values()) {
 					if (tr.isDone()) {
 						count++;
 					}
@@ -573,7 +638,7 @@ public class TaskManager extends Algorithm {
 					finished = true;
 				} else {
 					if (slp > 0) {
-						double pct = count * 100d / poolResults.size();
+						double pct = (count * 100d) / poolResults.size();
 						if (isShowProgress()) {
 							outWithTime(" - working (" + msg + ") : " + cf.format(pct) + " %");
 						}
@@ -582,8 +647,8 @@ public class TaskManager extends Algorithm {
 				}
 			} while (!finished);
 
-			for (Future<List<Output>> tr : poolResults) {
-				results.addAll(tr.get());
+			for (Key key : poolResults.keySet()) {
+				results.put(key, poolResults.get(key).get());
 			}
 			if (slp > 0) {
 				if (isShowProgress()) {
@@ -597,58 +662,5 @@ public class TaskManager extends Algorithm {
 		} catch (ExecutionException e) {
 			throw new TaskException(e);
 		}
-	}
-
-	/**
-	 * Checks if is show progress.
-	 * 
-	 * @return true, if is show progress
-	 */
-	public boolean isShowProgress() {
-		return showProgress;
-	}
-
-	/**
-	 * Sets the show progress.
-	 * 
-	 * @param showProgress
-	 *            the new show progress
-	 */
-	public void setShowProgress(boolean showProgress) {
-		this.showProgress = showProgress;
-	}
-
-	/**
-	 * Gets the active count.
-	 * 
-	 * @return the active count
-	 */
-	public int getActiveCount() {
-		return threadPool.getActiveCount();
-	}
-
-	/**
-	 * Gets the core pool size.
-	 * 
-	 * @return the core pool size
-	 */
-	public int getCorePoolSize() {
-		return threadPool.getCorePoolSize();
-	}
-
-	public int getQueueSize() {
-		return threadPool.getQueue().size();
-	}
-
-	public List<Runnable> shutdownNow() {
-		return threadPool.shutdownNow();
-	}
-
-	public boolean remove(Runnable task) {
-		return threadPool.remove(task);
-	}
-
-	public void execute(Runnable task) {
-		threadPool.execute(task);
 	}
 }
