@@ -43,7 +43,7 @@ import plugins.nherve.toolbox.Algorithm;
 public class TaskManager extends Algorithm {
 
 	/** The Constant DEFAULT_NBT. */
-	private final static int DEFAULT_NBT = Math.max(2, Runtime.getRuntime().availableProcessors() - 1);
+	private final static int DEFAULT_NBT = Runtime.getRuntime().availableProcessors();
 
 	/** The main. */
 	private static TaskManager main;

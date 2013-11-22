@@ -61,7 +61,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 				try {
 					Thread.sleep(getPartialDumpSleep());
 				} catch (InterruptedException e) {
-					err(e);
+					// ignore
 				}
 			}
 
@@ -82,7 +82,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 						err(e);
 					}
 				} catch (InterruptedException e) {
-					// err(e);
+					// ignore
 				}
 			}
 
@@ -432,7 +432,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 				partialDumpProcess.interrupt();
 				partialDumpProcess.join();
 			} catch (InterruptedException e1) {
-				err(e1);
+				e1.printStackTrace();
 			}
 		}
 	}
