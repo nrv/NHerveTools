@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import plugins.nherve.toolbox.Algorithm;
 import plugins.nherve.toolbox.image.db.ImageDatabaseSplit;
 import plugins.nherve.toolbox.image.feature.FeatureException;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
@@ -191,7 +190,7 @@ public class SVMClassifier extends LearningAlgorithm {
 
 		sigSize = pa[0].getSize();
 
-		log(pa[0].toString());
+		// log(pa[0].toString());
 
 		log("SVM create problem (" + (pa.length + na.length) + ") : pos(" + pa.length + "), neg(" + na.length + "), sig size(" + sigSize + ")");
 
@@ -253,7 +252,7 @@ public class SVMClassifier extends LearningAlgorithm {
 			param.C = Math.pow(2, pc);
 			// for (int pg = -5; pg < 6; pg++) {
 			// param.gamma = Math.pow(2, pg);
-			svm.svm_cross_validation(prob, param, 50, target);
+			svm.svm_cross_validation(prob, param, 10, target);
 
 			int total_correct = 0;
 			for (int i = 0; i < prob.l; i++) {
