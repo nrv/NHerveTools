@@ -28,11 +28,11 @@ import java.util.TreeMap;
  * 
  * @author Nicolas HERVE - nherve@ina.fr
  */
-public class SparseVectorSignature extends VectorSignature  {
-	
+public class SparseVectorSignature extends VectorSignature {
+
 	/** The size. */
 	private int size;
-	
+
 	/** The data. */
 	private Map<Integer, Double> data;
 
@@ -47,29 +47,36 @@ public class SparseVectorSignature extends VectorSignature  {
 		this.size = size;
 		data = new TreeMap<Integer, Double>();
 	}
-	
-//	public SparseVectorSignature() {
-//		this(0);
-//	}
 
-	/* (non-Javadoc)
- * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#clone()
- */
-@Override
+	// public SparseVectorSignature() {
+	// this(0);
+	// }
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * plugins.nherve.toolbox.image.feature.signature.VectorSignature#clone()
+	 */
+	@Override
 	public SparseVectorSignature clone() throws CloneNotSupportedException {
 		SparseVectorSignature ns = new SparseVectorSignature(getSize());
-		for (int d = 0; d < getSize(); d++) {
-			try {
+		try {
+			for (int d : this) {
 				ns.set(d, get(d));
-			} catch (SignatureException e) {
-				throw new CloneNotSupportedException("SignatureException : " + e.getMessage());
 			}
+		} catch (SignatureException e) {
+			throw new CloneNotSupportedException("SignatureException : " + e.getMessage());
 		}
 		return ns;
 	}
 
-	/* (non-Javadoc)
-	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#concat(plugins.nherve.toolbox.image.feature.signature.VectorSignature)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * plugins.nherve.toolbox.image.feature.signature.VectorSignature#concat
+	 * (plugins.nherve.toolbox.image.feature.signature.VectorSignature)
 	 */
 	@Override
 	public void concat(VectorSignature other) throws SignatureException {
@@ -84,7 +91,7 @@ public class SparseVectorSignature extends VectorSignature  {
 			d++;
 		}
 		for (int i = 0; i < other.getSize(); i++) {
-			if (other.get(i)!= 0) {
+			if (other.get(i) != 0) {
 				newData.put(d, other.get(i));
 			}
 			d++;
@@ -94,8 +101,11 @@ public class SparseVectorSignature extends VectorSignature  {
 		data = newData;
 	}
 
-	/* (non-Javadoc)
-	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#get(int)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * plugins.nherve.toolbox.image.feature.signature.VectorSignature#get(int)
 	 */
 	@Override
 	public double get(int idx) throws SignatureException {
@@ -105,24 +115,35 @@ public class SparseVectorSignature extends VectorSignature  {
 		return data.containsKey(idx) ? data.get(idx) : 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#getNonZeroBins()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * plugins.nherve.toolbox.image.feature.signature.VectorSignature#getNonZeroBins
+	 * ()
 	 */
 	@Override
 	public int getNonZeroBins() throws SignatureException {
 		return data.size();
 	}
 
-	/* (non-Javadoc)
-	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#getSize()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * plugins.nherve.toolbox.image.feature.signature.VectorSignature#getSize()
 	 */
 	@Override
 	public int getSize() {
 		return size;
 	}
 
-	/* (non-Javadoc)
-	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#set(int, double)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * plugins.nherve.toolbox.image.feature.signature.VectorSignature#set(int,
+	 * double)
 	 */
 	@Override
 	public void set(int idx, double val) throws SignatureException {
@@ -146,14 +167,16 @@ public class SparseVectorSignature extends VectorSignature  {
 		return data;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
 	public Iterator<Integer> iterator() {
 		return data.keySet().iterator();
 	}
-	
+
 	@Override
 	public void setSize(int s) {
 		size = s;
