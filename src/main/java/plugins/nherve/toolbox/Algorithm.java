@@ -27,7 +27,7 @@ import java.util.Date;
  * 
  * @author Nicolas HERVE - nherve@ina.fr
  */
-public abstract class Algorithm implements AbleToLogMessages {
+public class Algorithm implements AbleToLogMessages {
 	
 	private static final SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.SSS");
 	
