@@ -6,11 +6,11 @@
 	<name>NHerveToolbox</name>
 	<packaging>jar</packaging>
 	<description>Some utility classes, independent of any library</description>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -23,8 +23,36 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>build-helper-maven-plugin</artifactId>
+										<versionRange>[1.8,)</versionRange>
+										<goals>
+											<goal>add-source</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
-	
+
 	<developers>
 		<developer>
 			<id>nherve</id>
@@ -36,7 +64,7 @@
 			</roles>
 		</developer>
 	</developers>
-	
+
 	<scm>
 		<url>https://github.com/nrv/NHerveTools</url>
 	</scm>
