@@ -1,19 +1,19 @@
 /*
  * Copyright 2010, 2011 Institut Pasteur.
  * Copyright 2012 Institut National de l'Audiovisuel.
- * 
+ *
  * This file is part of NHerveTools.
- * 
+ *
  * NHerveTools is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * NHerveTools is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with NHerveTools. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,6 +33,8 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 import plugins.nherve.toolbox.image.feature.Signature;
 import plugins.nherve.toolbox.image.feature.signature.BagOfSignatures;
@@ -42,51 +44,53 @@ import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.SparseVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 
-
 /**
  * The Class PersistenceToolbox.
- * 
+ *
  * @author Nicolas HERVE - nherve@ina.fr
  */
 public class PersistenceToolbox {
-	
+
 	/** The Constant BAG_TYPE. */
 	public final static int BAG_TYPE = 2;
-	
+
 	/** The Constant cs. */
 	private final static Charset cs = Charset.forName("UTF-8");
-	
+
 	/** The Constant csd. */
 	private final static CharsetDecoder csd = cs.newDecoder();
-	
+
 	/** The Constant cse. */
 	private final static CharsetEncoder cse = cs.newEncoder();
-	
+
 	/** The Constant DENSE_TYPE. */
 	public final static int DENSE_TYPE = 0;
-	
+
 	/** The Constant DOUBLE_NB_BYTES. */
 	public final static int DOUBLE_NB_BYTES = 8;
-	
+
 	/** The Constant FLOAT_NB_BYTES. */
 	public final static int FLOAT_NB_BYTES = 4;
-	
+
 	public final static int INDEX_TYPE = 4;
-	
+
 	/** The Constant INT_NB_BYTES. */
 	public final static int INT_NB_BYTES = 4;
 
 	public final static int LONG_NB_BYTES = 8;
-	
+
 	/** The Constant BAG_TYPE. */
-	public final static int NULL_TYPE = 3;;
-	
+	public final static int NULL_TYPE = 3;
+
 	/** The Constant SPARSE_TYPE. */
-	public final static int SPARSE_TYPE = 1;;
+	public final static int SPARSE_TYPE = 1;
+
+	public final static Map<Integer, SignaturePersistenceHook<? extends Signature>> HOOKS_BY_TYPE = new HashMap<Integer, SignaturePersistenceHook<? extends Signature>>();
+	public final static Map<Class<? extends Signature>, SignaturePersistenceHook<? extends Signature>> HOOKS_BY_CLASS = new HashMap<Class<? extends Signature>, SignaturePersistenceHook<? extends Signature>>();
 
 	/**
 	 * Dump bag of signatures.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @param s
@@ -103,7 +107,7 @@ public class PersistenceToolbox {
 
 	/**
 	 * Dump boolean.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @param b
@@ -118,10 +122,10 @@ public class PersistenceToolbox {
 			dumpInt(fc, 0);
 		}
 	}
-	
+
 	/**
 	 * Dump dense vector signature.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @param s
@@ -140,7 +144,7 @@ public class PersistenceToolbox {
 
 	/**
 	 * Dump double.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @param d
@@ -155,10 +159,10 @@ public class PersistenceToolbox {
 		db.flip();
 		fc.write(bb);
 	}
-	
+
 	/**
 	 * Dump float.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @param f
@@ -173,7 +177,17 @@ public class PersistenceToolbox {
 		db.flip();
 		fc.write(bb);
 	}
-	
+
+	public static void dumpFullIntArray(FileChannel fc, int[] i) throws IOException {
+		dumpInt(fc, i.length);
+		dumpIntArray(fc, i);
+	}
+
+	public static void dumpFullLongArray(FileChannel fc, long[] i) throws IOException {
+		dumpInt(fc, i.length);
+		dumpLongArray(fc, i);
+	}
+
 	public static void dumpIndexSignature(FileChannel fc, IndexSignature s) throws IOException {
 		dumpInt(fc, s.getSize());
 		ByteBuffer bb = ByteBuffer.allocate(INT_NB_BYTES * s.getSize());
@@ -185,7 +199,7 @@ public class PersistenceToolbox {
 
 	/**
 	 * Dump int.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @param i
@@ -200,10 +214,10 @@ public class PersistenceToolbox {
 		ib.flip();
 		fc.write(bb);
 	}
-	
+
 	/**
 	 * Dump int array.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @param i
@@ -218,55 +232,7 @@ public class PersistenceToolbox {
 		ib.flip();
 		fc.write(bb);
 	}
-	
-	public static void dumpFullIntArray(FileChannel fc, int[] i) throws IOException {
-		dumpInt(fc, i.length);
-		dumpIntArray(fc, i);
-	}
-	
-	public static int[] loadIntArray(FileChannel fc, int sz) throws IOException {
-		ByteBuffer bb = ByteBuffer.allocate(PersistenceToolbox.INT_NB_BYTES * sz);
-		fc.read(bb);
-		bb.flip();
-		IntBuffer ib = bb.asIntBuffer();
-		int[] res = new int[sz];
-		ib.get(res);
-		return res;
-	}
-	
-	public static int[] loadFullIntArray(FileChannel fc) throws IOException {
-		int sz = loadInt(fc);
-		return loadIntArray(fc, sz);
-	}
-	
-	public static void dumpLongArray(FileChannel fc, long[] i) throws IOException {
-		ByteBuffer bb = ByteBuffer.allocate(i.length * LONG_NB_BYTES);
-		LongBuffer ib = bb.asLongBuffer();
-		ib.put(i);
-		ib.flip();
-		fc.write(bb);
-	}
-	
-	public static void dumpFullLongArray(FileChannel fc, long[] i) throws IOException {
-		dumpInt(fc, i.length);
-		dumpLongArray(fc, i);
-	}
-	
-	public static long[] loadLongArray(FileChannel fc, int sz) throws IOException {
-		ByteBuffer bb = ByteBuffer.allocate(PersistenceToolbox.LONG_NB_BYTES * sz);
-		fc.read(bb);
-		bb.flip();
-		LongBuffer ib = bb.asLongBuffer();
-		long[] res = new long[sz];
-		ib.get(res);
-		return res;
-	}
-	
-	public static long[] loadFullLongArray(FileChannel fc) throws IOException {
-		int sz = loadInt(fc);
-		return loadLongArray(fc, sz);
-	}
-		
+
 	public static void dumpLong(FileChannel fc, long l) throws IOException {
 		ByteBuffer bb = ByteBuffer.allocate(LONG_NB_BYTES);
 		LongBuffer lb = bb.asLongBuffer();
@@ -275,9 +241,17 @@ public class PersistenceToolbox {
 		fc.write(bb);
 	}
 
+	public static void dumpLongArray(FileChannel fc, long[] i) throws IOException {
+		ByteBuffer bb = ByteBuffer.allocate(i.length * LONG_NB_BYTES);
+		LongBuffer ib = bb.asLongBuffer();
+		ib.put(i);
+		ib.flip();
+		fc.write(bb);
+	}
+
 	/**
 	 * Dump signature.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @param s
@@ -301,6 +275,10 @@ public class PersistenceToolbox {
 		} else if (s instanceof BagOfSignatures<?>) {
 			dumpInt(fc, BAG_TYPE);
 			dumpBagOfSignatures(fc, (BagOfSignatures<VectorSignature>) s);
+		} else if (HOOKS_BY_CLASS.containsKey(s.getClass())) {
+			SignaturePersistenceHook<? extends VectorSignature> hook = HOOKS_BY_CLASS.get(s.getClass());
+			dumpInt(fc, hook.getTypeCode());
+			hook.dumpSignature(fc, (VectorSignature)s);
 		} else {
 			throw new IOException("dumpSignature(" + s.getClass().getName() + ") not yet implemented");
 		}
@@ -308,7 +286,7 @@ public class PersistenceToolbox {
 
 	/**
 	 * Dump sparse vector signature.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @param s
@@ -350,7 +328,7 @@ public class PersistenceToolbox {
 
 	/**
 	 * Dump string.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @param s
@@ -369,7 +347,7 @@ public class PersistenceToolbox {
 
 	/**
 	 * Gets the file.
-	 * 
+	 *
 	 * @param f
 	 *            the f
 	 * @param write
@@ -392,7 +370,7 @@ public class PersistenceToolbox {
 
 	/**
 	 * Load bag of signatures.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @return the bag of signatures
@@ -417,7 +395,7 @@ public class PersistenceToolbox {
 
 	/**
 	 * Load boolean.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @return true, if successful
@@ -427,10 +405,10 @@ public class PersistenceToolbox {
 	public static boolean loadBoolean(FileChannel fc) throws IOException {
 		return loadInt(fc) == 1;
 	}
-	
+
 	/**
 	 * Load dense vector signature.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @return the dense vector signature
@@ -451,7 +429,7 @@ public class PersistenceToolbox {
 
 	/**
 	 * Load double.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @return the double
@@ -465,10 +443,10 @@ public class PersistenceToolbox {
 		DoubleBuffer db = bb.asDoubleBuffer();
 		return db.get();
 	}
-	
+
 	/**
 	 * Load float.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @return the float
@@ -483,6 +461,16 @@ public class PersistenceToolbox {
 		return db.get();
 	}
 
+	public static int[] loadFullIntArray(FileChannel fc) throws IOException {
+		int sz = loadInt(fc);
+		return loadIntArray(fc, sz);
+	}
+
+	public static long[] loadFullLongArray(FileChannel fc) throws IOException {
+		int sz = loadInt(fc);
+		return loadLongArray(fc, sz);
+	}
+
 	public static IndexSignature loadIndexSignature(FileChannel fc) throws IOException {
 		int sz = loadInt(fc);
 		ByteBuffer bb = ByteBuffer.allocate(INT_NB_BYTES * sz);
@@ -494,10 +482,10 @@ public class PersistenceToolbox {
 		IndexSignature v = new IndexSignature(data);
 		return v;
 	}
-	
+
 	/**
 	 * Load int.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @return the int
@@ -511,7 +499,17 @@ public class PersistenceToolbox {
 		IntBuffer ib = bb.asIntBuffer();
 		return ib.get();
 	}
-	
+
+	public static int[] loadIntArray(FileChannel fc, int sz) throws IOException {
+		ByteBuffer bb = ByteBuffer.allocate(PersistenceToolbox.INT_NB_BYTES * sz);
+		fc.read(bb);
+		bb.flip();
+		IntBuffer ib = bb.asIntBuffer();
+		int[] res = new int[sz];
+		ib.get(res);
+		return res;
+	}
+
 	public static long loadLong(FileChannel fc) throws IOException {
 		ByteBuffer bb = ByteBuffer.allocate(LONG_NB_BYTES);
 		fc.read(bb);
@@ -520,9 +518,19 @@ public class PersistenceToolbox {
 		return ib.get();
 	}
 
+	public static long[] loadLongArray(FileChannel fc, int sz) throws IOException {
+		ByteBuffer bb = ByteBuffer.allocate(PersistenceToolbox.LONG_NB_BYTES * sz);
+		fc.read(bb);
+		bb.flip();
+		LongBuffer ib = bb.asLongBuffer();
+		long[] res = new long[sz];
+		ib.get(res);
+		return res;
+	}
+
 	/**
 	 * Load sparse vector signature.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @return the sparse vector signature
@@ -564,7 +572,7 @@ public class PersistenceToolbox {
 
 	/**
 	 * Load string.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @return the string
@@ -582,7 +590,7 @@ public class PersistenceToolbox {
 
 	/**
 	 * Load vector signature.
-	 * 
+	 *
 	 * @param fc
 	 *            the fc
 	 * @return the vector signature
@@ -599,6 +607,14 @@ public class PersistenceToolbox {
 		case SPARSE_TYPE:
 			return loadSparseVectorSignature(fc);
 		}
+		if (HOOKS_BY_TYPE.containsKey(type)) {
+			return HOOKS_BY_TYPE.get(type).loadSignature(fc);
+		}
 		throw new IOException("Unknown VectorSignature type (" + type + ")");
+	}
+
+	public static void registerSignaturePersistenceHook(SignaturePersistenceHook<? extends Signature> hook) {
+		HOOKS_BY_TYPE.put(hook.getTypeCode(), hook);
+		HOOKS_BY_CLASS.put(hook.getSignatureClass(), hook);
 	}
 }
