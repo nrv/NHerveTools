@@ -15,33 +15,26 @@ import plugins.nherve.toolbox.image.feature.Signature;
 import plugins.nherve.toolbox.image.feature.SignatureDistance;
 import plugins.nherve.toolbox.image.feature.signature.L2Distance;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 
-public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Signature> {
-	private class SingleDistance {
-		int i;
-		int j;
-		double d;
-	}
-	
-	private class ComputeDistancesWorker implements Callable<List<SingleDistance>> {
-		public ComputeDistancesWorker(List<Signature> points, int start, int end) {
+public class AgglomerativeClustering<T extends Signature> extends DefaultClusteringAlgorithmImpl<T> {
+	private class ComputeDistancesWorker implements Callable<List<AgglomerativeClusteringSingleDistance>> {
+		public ComputeDistancesWorker(List<T> points, int start, int end) {
 			super();
 			this.points = points;
 			this.start = start;
 			this.end = end;
 		}
 
-		private List<Signature> points;
+		private List<T> points;
 		private int start;
 		private int end;
 
 		@Override
-		public List<SingleDistance> call() throws Exception {
-			List<SingleDistance> distances = new ArrayList<SingleDistance>();
+		public List<AgglomerativeClusteringSingleDistance> call() throws Exception {
+			List<AgglomerativeClusteringSingleDistance> distances = new ArrayList<AgglomerativeClusteringSingleDistance>();
 			for (int i = start; i < end; i++) {
 				for (int j = i + 1; j < points.size(); j++) {
-					SingleDistance sd = new SingleDistance();
+					AgglomerativeClusteringSingleDistance sd = new AgglomerativeClusteringSingleDistance();
 					sd.i = i;
 					sd.j = j;
 					try {
@@ -78,8 +71,8 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Sign
 	}
 
 	@Override
-	public void compute(List<Signature> points) throws ClusteringException {
-		List<SingleDistance> distances = new ArrayList<SingleDistance>();
+	public void compute(List<T> points) throws ClusteringException {
+		List<AgglomerativeClusteringSingleDistance> distances = new ArrayList<AgglomerativeClusteringSingleDistance>();
 		
 		log("AgglomerativeClustering - Distances cache");
 		TaskManager tm = TaskManager.getSecondLevelInstance();
@@ -89,7 +82,7 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Sign
 		
 		int done = 0;
 		int start = 0;
-		List<Future<List<SingleDistance>>> results = new ArrayList<Future<List<SingleDistance>>>();
+		List<Future<List<AgglomerativeClusteringSingleDistance>>> results = new ArrayList<Future<List<AgglomerativeClusteringSingleDistance>>>();
 		for (int end = 1; end < points.size(); end++) {
 			done += (points.size() - end);
 			if (done > splitSize) {
@@ -101,7 +94,7 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Sign
 		if (done > 0) {
 			results.add(tm.submit(new ComputeDistancesWorker(points, start, points.size())));
 		}
-		for (Future<List<SingleDistance>> f : results) {
+		for (Future<List<AgglomerativeClusteringSingleDistance>> f : results) {
 			try {
 				distances.addAll(f.get());
 			} catch (InterruptedException e) {
@@ -114,17 +107,17 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Sign
 		// log("AgglomerativeClustering - Distances : " + distances.size() + " / " + idx(points.size() - 1, points.size() - 1, points.size()));
 		log("AgglomerativeClustering - Getting distances");
 		int s = points.size();
-		SingleDistance[] dt = new SingleDistance[s * (s + 1) / 2];
-		for (SingleDistance sd : distances) {
+		AgglomerativeClusteringSingleDistance[] dt = new AgglomerativeClusteringSingleDistance[s * (s + 1) / 2];
+		for (AgglomerativeClusteringSingleDistance sd : distances) {
 			dt[idx(sd.i, sd.j, s)] = sd; 
 		}
 		
 		log("AgglomerativeClustering - Sorting distances");
 		
-		Collections.sort(distances, new Comparator<SingleDistance>() {
+		Collections.sort(distances, new Comparator<AgglomerativeClusteringSingleDistance>() {
 
 			@Override
-			public int compare(SingleDistance o1, SingleDistance o2) {
+			public int compare(AgglomerativeClusteringSingleDistance o1, AgglomerativeClusteringSingleDistance o2) {
 				return (int)Math.signum(o1.d - o2.d);
 			}
 		});
@@ -133,7 +126,7 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Sign
 		affectation = new int[points.size()];
 		Arrays.fill(affectation, 0);
 		nbClasses = 0;
-		for (SingleDistance sd : distances) {
+		for (AgglomerativeClusteringSingleDistance sd : distances) {
 			if (sd.d <= threshold) {
 				if (affectation[sd.i] > 0) {
 					if (affectation[sd.j] == 0) {
@@ -155,12 +148,12 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Sign
 	}
 
 	@Override
-	public List<Signature> getCentroids() throws ClusteringException {
+	public List<T> getCentroids() throws ClusteringException {
 		return null;
 	}
 
 	@Override
-	public int[] getAffectations(List<Signature> points) throws ClusteringException {
+	public int[] getAffectations(List<T> points) throws ClusteringException {
 		return null;
 	}
 	
@@ -168,7 +161,7 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Sign
 		return affectation;
 	}
 
-	public void setDistance(SignatureDistance<VectorSignature> distance) {
+	public void setDistance(SignatureDistance<T> distance) {
 		this.distance = distance;
 	}
 
