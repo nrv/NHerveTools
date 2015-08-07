@@ -19,52 +19,8 @@ import plugins.nherve.toolbox.image.feature.signature.L1Distance;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 
 public class QueryManager<T extends SegmentableImage> extends Algorithm {
-	public class ResponseUnit implements Comparable<ResponseUnit> {
-		private ImageEntry<T> entry;
-		private int lid;
-		private double distanceToQuery;
-
-		public ResponseUnit() {
-			super();
-			lid = -1;
-		}
-
-		@Override
-		public int compareTo(ResponseUnit o) {
-			return (int) Math.signum(distanceToQuery - o.distanceToQuery);
-		}
-
-		@Override
-		public String toString() {
-			return "ResponseUnit [entry=" + entry.getId() + " (" + lid + "), distanceToQuery=" + distanceToQuery + "]";
-		}
-
-		public ImageEntry<T> getEntry() {
-			return entry;
-		}
-
-		public void setEntry(ImageEntry<T> entry) {
-			this.entry = entry;
-		}
-
-		public int getLid() {
-			return lid;
-		}
-
-		public void setLid(int lid) {
-			this.lid = lid;
-		}
-
-		public double getDistanceToQuery() {
-			return distanceToQuery;
-		}
-
-		public void setDistanceToQuery(double distanceToQuery) {
-			this.distanceToQuery = distanceToQuery;
-		}
-	}
-
 	public class Response implements Iterable<ResponseUnit> {
+		private double currentMin;
 		private String queryId;
 		private List<ResponseUnit> internal;
 
@@ -72,24 +28,11 @@ public class QueryManager<T extends SegmentableImage> extends Algorithm {
 			super();
 			internal = new ArrayList<ResponseUnit>();
 			this.queryId = queryId;
-		}
-
-		public void sortAndTruncate(int k) {
-			Collections.sort(internal);
-			internal = internal.subList(0, k);
+			currentMin = Double.MAX_VALUE;
 		}
 
 		public boolean add(ResponseUnit e) {
 			return internal.add(e);
-		}
-
-		@Override
-		public String toString() {
-			String r = "Response (" + queryId + ") : \n";
-			for (ResponseUnit ru : internal) {
-				r += " - " + ru.toString() + "\n";
-			}
-			return r;
 		}
 
 		public void dump(BufferedWriter w) throws IOException {
@@ -105,13 +48,83 @@ public class QueryManager<T extends SegmentableImage> extends Algorithm {
 			}
 		}
 
-		public int size() {
-			return internal.size();
+		protected double getCurrentMin() {
+			return currentMin;
 		}
 
 		@Override
 		public Iterator<ResponseUnit> iterator() {
 			return internal.iterator();
+		}
+
+		protected void setCurrentMin(double currentMin) {
+			this.currentMin = currentMin;
+		}
+
+		public int size() {
+			return internal.size();
+		}
+
+		public void sortAndTruncate(int k) {
+			Collections.sort(internal);
+			if (k < internal.size()) {
+				internal = new ArrayList<ResponseUnit>(internal.subList(0, k));
+			}
+			setCurrentMin(internal.get(internal.size() - 1).getDistanceToQuery());
+		}
+
+		@Override
+		public String toString() {
+			String r = "Response (" + queryId + ") : \n";
+			for (ResponseUnit ru : internal) {
+				r += " - " + ru.toString() + "\n";
+			}
+			return r;
+		}
+	}
+
+	public class ResponseUnit implements Comparable<ResponseUnit> {
+		private ImageEntry<T> entry;
+		private int lid;
+		private double distanceToQuery;
+
+		public ResponseUnit() {
+			super();
+			lid = -1;
+		}
+
+		@Override
+		public int compareTo(ResponseUnit o) {
+			return (int) Math.signum(distanceToQuery - o.distanceToQuery);
+		}
+
+		public double getDistanceToQuery() {
+			return distanceToQuery;
+		}
+
+		public ImageEntry<T> getEntry() {
+			return entry;
+		}
+
+		public int getLid() {
+			return lid;
+		}
+
+		public void setDistanceToQuery(double distanceToQuery) {
+			this.distanceToQuery = distanceToQuery;
+		}
+
+		public void setEntry(ImageEntry<T> entry) {
+			this.entry = entry;
+		}
+
+		public void setLid(int lid) {
+			this.lid = lid;
+		}
+
+		@Override
+		public String toString() {
+			return "ResponseUnit [entry=" + entry.getId() + " (" + lid + "), distanceToQuery=" + distanceToQuery + "]";
 		}
 	}
 
@@ -123,36 +136,11 @@ public class QueryManager<T extends SegmentableImage> extends Algorithm {
 		distance = new L1Distance();
 	}
 
-	public Response randomQuery(final String queryId, final ImageDatabase<T> db, int n) throws FeatureException {
-		Response result = new Response(queryId);
-
-		if (n > db.size()) {
-			n = db.size();
-		}
-
-		Set<ImageEntry<T>> choosen = new HashSet<ImageEntry<T>>();
-
-		Random rd = new Random(System.currentTimeMillis());
-
-		while (result.size() < n) {
-			ImageEntry<T> e = db.get(rd.nextInt(db.size()));
-			if (!choosen.contains(e)) {
-				ResponseUnit u = new ResponseUnit();
-				u.entry = e;
-				u.distanceToQuery = 0;
-				result.add(u);
-				choosen.add(e);
-			}
-		}
-
-		return result;
-	}
-
 	public Response knnQuery(final String queryId, final ImageDatabase<T> db, final String desc, final ImageEntry<T> query, final int k) throws FeatureException {
 		VectorSignature vs = db.getGlobalSignature(query, desc);
 		return knnQuery(queryId, db, desc, vs, k);
 	}
-	
+
 	public Response knnQuery(final String queryId, final ImageDatabase<T> db, final String desc, final VectorSignature query, final int k) throws FeatureException {
 		Response result = new Response(queryId);
 		if (db.containsGlobalDescriptor(desc)) {
@@ -183,6 +171,31 @@ public class QueryManager<T extends SegmentableImage> extends Algorithm {
 		}
 
 		result.sortAndTruncate(k);
+
+		return result;
+	}
+
+	public Response randomQuery(final String queryId, final ImageDatabase<T> db, int n) throws FeatureException {
+		Response result = new Response(queryId);
+
+		if (n > db.size()) {
+			n = db.size();
+		}
+
+		Set<ImageEntry<T>> choosen = new HashSet<ImageEntry<T>>();
+
+		Random rd = new Random(System.currentTimeMillis());
+
+		while (result.size() < n) {
+			ImageEntry<T> e = db.get(rd.nextInt(db.size()));
+			if (!choosen.contains(e)) {
+				ResponseUnit u = new ResponseUnit();
+				u.entry = e;
+				u.distanceToQuery = 0;
+				result.add(u);
+				choosen.add(e);
+			}
+		}
 
 		return result;
 	}
