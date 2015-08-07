@@ -11,12 +11,13 @@ import java.util.concurrent.Future;
 
 import plugins.nherve.toolbox.concurrent.TaskManager;
 import plugins.nherve.toolbox.image.feature.DefaultClusteringAlgorithmImpl;
+import plugins.nherve.toolbox.image.feature.Signature;
 import plugins.nherve.toolbox.image.feature.SignatureDistance;
 import plugins.nherve.toolbox.image.feature.signature.L2Distance;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 
-public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<VectorSignature> {
+public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Signature> {
 	private class SingleDistance {
 		int i;
 		int j;
@@ -24,14 +25,14 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Vect
 	}
 	
 	private class ComputeDistancesWorker implements Callable<List<SingleDistance>> {
-		public ComputeDistancesWorker(List<VectorSignature> points, int start, int end) {
+		public ComputeDistancesWorker(List<Signature> points, int start, int end) {
 			super();
 			this.points = points;
 			this.start = start;
 			this.end = end;
 		}
 
-		private List<VectorSignature> points;
+		private List<Signature> points;
 		private int start;
 		private int end;
 
@@ -55,7 +56,7 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Vect
 		}
 	}
 	
-	private SignatureDistance<VectorSignature> distance;
+	private SignatureDistance distance;
 	private int[] affectation;
 	private int nbClasses;
 	private double threshold;
@@ -77,7 +78,7 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Vect
 	}
 
 	@Override
-	public void compute(List<VectorSignature> points) throws ClusteringException {
+	public void compute(List<Signature> points) throws ClusteringException {
 		List<SingleDistance> distances = new ArrayList<SingleDistance>();
 		
 		log("AgglomerativeClustering - Distances cache");
@@ -154,12 +155,12 @@ public class AgglomerativeClustering extends DefaultClusteringAlgorithmImpl<Vect
 	}
 
 	@Override
-	public List<VectorSignature> getCentroids() throws ClusteringException {
+	public List<Signature> getCentroids() throws ClusteringException {
 		return null;
 	}
 
 	@Override
-	public int[] getAffectations(List<VectorSignature> points) throws ClusteringException {
+	public int[] getAffectations(List<Signature> points) throws ClusteringException {
 		return null;
 	}
 	
