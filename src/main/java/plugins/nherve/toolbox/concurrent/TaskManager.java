@@ -1,19 +1,19 @@
 /*
  * Copyright 2010, 2011 Institut Pasteur.
  * Copyright 2012 Institut National de l'Audiovisuel.
- * 
+ *
  * This file is part of NHerveTools.
- * 
+ *
  * NHerveTools is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * NHerveTools is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with NHerveTools. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -37,7 +37,7 @@ import plugins.nherve.toolbox.Algorithm;
 
 /**
  * The Class TaskManager.
- * 
+ *
  * @author Nicolas HERVE - nherve@ina.fr
  */
 public class TaskManager extends Algorithm {
@@ -61,7 +61,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Gets the main instance.
-	 * 
+	 *
 	 * @return the main instance
 	 */
 	public static synchronized TaskManager getMainInstance() {
@@ -70,7 +70,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Gets the main instance.
-	 * 
+	 *
 	 * @param preferedSize
 	 *            the prefered size
 	 * @return the main instance
@@ -85,7 +85,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Gets the second level instance.
-	 * 
+	 *
 	 * @return the second level instance
 	 */
 	public static synchronized TaskManager getSecondLevelInstance() {
@@ -94,7 +94,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Gets the second level instance.
-	 * 
+	 *
 	 * @param preferedSize
 	 *            the prefered size
 	 * @return the second level instance
@@ -118,7 +118,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Inits the all.
-	 * 
+	 *
 	 * @param preferedSize
 	 *            the prefered size
 	 * @param displayEnabled
@@ -132,7 +132,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Inits the all.
-	 * 
+	 *
 	 * @param mainPreferedSize
 	 *            the main prefered size
 	 * @param secondLevelPreferedSize
@@ -174,7 +174,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Instantiates a new task manager.
-	 * 
+	 *
 	 * @param nbt
 	 *            the nbt
 	 */
@@ -192,7 +192,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Gets the active count.
-	 * 
+	 *
 	 * @return the active count
 	 */
 	public int getActiveCount() {
@@ -201,7 +201,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Gets the core pool size.
-	 * 
+	 *
 	 * @return the core pool size
 	 */
 	public int getCorePoolSize() {
@@ -226,11 +226,19 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Checks if is show progress.
-	 * 
+	 *
 	 * @return true, if is show progress
 	 */
 	public boolean isShowProgress() {
 		return showProgress;
+	}
+
+	public boolean isShutdown() {
+		return threadPool.isShutdown();
+	}
+
+	public boolean isTerminated() {
+		return threadPool.isTerminated();
 	}
 
 	public boolean remove(Runnable task) {
@@ -239,7 +247,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Sets the show progress.
-	 * 
+	 *
 	 * @param showProgress
 	 *            the new show progress
 	 */
@@ -270,7 +278,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Submit.
-	 * 
+	 *
 	 * @param <Output>
 	 *            the generic type
 	 * @param task
@@ -285,7 +293,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Submit all.
-	 * 
+	 *
 	 * @param <Output>
 	 *            the generic type
 	 * @param tasks
@@ -307,7 +315,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Submit multi for all.
-	 * 
+	 *
 	 * @param <Input>
 	 *            the generic type
 	 * @param <Output>
@@ -337,7 +345,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Submit multi for all.
-	 * 
+	 *
 	 * @param <Input>
 	 *            the generic type
 	 * @param <Output>
@@ -406,7 +414,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Submit single for all.
-	 * 
+	 *
 	 * @param <Input>
 	 *            the generic type
 	 * @param <Output>
@@ -479,7 +487,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Wait result lists.
-	 * 
+	 *
 	 * @param <Output>
 	 *            the generic type
 	 * @param poolResults
@@ -541,7 +549,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Wait results.
-	 * 
+	 *
 	 * @param <Output>
 	 *            the generic type
 	 * @param poolResults
@@ -602,7 +610,7 @@ public class TaskManager extends Algorithm {
 
 	/**
 	 * Wait results.
-	 * 
+	 *
 	 * @param <Key>
 	 *            the generic type
 	 * @param <Output>
