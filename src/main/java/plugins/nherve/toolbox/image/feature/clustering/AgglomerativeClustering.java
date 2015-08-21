@@ -122,6 +122,12 @@ public class AgglomerativeClustering<T extends Signature> extends DefaultCluster
 			}
 		});
 		
+		double max = Collections.max(distances).d;
+		double min = Collections.min(distances).d;
+		
+		log("AgglomerativeClustering - min = " + min);
+		log("AgglomerativeClustering - max = " + max);
+		
 		log("AgglomerativeClustering - Agglomerating");
 		affectation = new int[points.size()];
 		Arrays.fill(affectation, 0);
