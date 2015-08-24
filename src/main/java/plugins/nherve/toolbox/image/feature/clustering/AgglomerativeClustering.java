@@ -107,10 +107,10 @@ public class AgglomerativeClustering<T extends Signature> extends DefaultCluster
 		// log("AgglomerativeClustering - Distances : " + distances.size() + " / " + idx(points.size() - 1, points.size() - 1, points.size()));
 		log("AgglomerativeClustering - Getting distances");
 		int s = points.size();
-		AgglomerativeClusteringSingleDistance[] dt = new AgglomerativeClusteringSingleDistance[s * (s + 1) / 2];
-		for (AgglomerativeClusteringSingleDistance sd : distances) {
-			dt[idx(sd.i, sd.j, s)] = sd; 
-		}
+//		AgglomerativeClusteringSingleDistance[] dt = new AgglomerativeClusteringSingleDistance[s * (s + 1) / 2];
+//		for (AgglomerativeClusteringSingleDistance sd : distances) {
+//			dt[idx(sd.i, sd.j, s)] = sd; 
+//		}
 		
 		log("AgglomerativeClustering - Sorting distances");
 		

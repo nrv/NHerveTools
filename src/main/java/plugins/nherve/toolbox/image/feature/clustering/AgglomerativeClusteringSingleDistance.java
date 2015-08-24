@@ -1,9 +1,9 @@
 package plugins.nherve.toolbox.image.feature.clustering;
 
 public class AgglomerativeClusteringSingleDistance implements Comparable<AgglomerativeClusteringSingleDistance> {
-	int i;
-	int j;
-	double d;
+	public int i;
+	public int j;
+	public double d;
 	
 	@Override
 	public int compareTo(AgglomerativeClusteringSingleDistance o) {
