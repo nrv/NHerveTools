@@ -193,14 +193,19 @@ public abstract class VectorSignature implements Signature, Iterable<Integer> {
 	public void multiply(int idx, double coef) throws SignatureException {
 		set(idx, get(idx) * coef);
 	}
-
-	public void normalizeL2(boolean force) throws SignatureException {
+	
+	public double norm() throws SignatureException {
 		double norm = 0;
 		for (int d = 0; d < getSize(); d++) {
 			double v = get(d);
 			norm += v * v;
 		}
-		norm = Math.sqrt(norm);
+		
+		return Math.sqrt(norm);
+	}
+
+	public void normalizeL2(boolean force) throws SignatureException {
+		double norm = norm();
 		
 		if (norm != 0.0) {
 			multiply(1.0 / norm);

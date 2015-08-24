@@ -109,10 +109,15 @@ public class SparseVectorSignature extends VectorSignature {
 	 */
 	@Override
 	public double get(int idx) throws SignatureException {
+		Double res = data.get(idx);
+		
+		if (res != null) return res;
+		
 		if ((idx < 0) || (idx >= size)) {
 			throw new SignatureException("Invalid signature index (" + idx + ")");
 		}
-		return data.containsKey(idx) ? data.get(idx) : 0;
+		
+		return 0;
 	}
 
 	/*

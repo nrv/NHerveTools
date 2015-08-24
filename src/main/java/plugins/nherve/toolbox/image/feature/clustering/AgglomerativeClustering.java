@@ -32,7 +32,7 @@ public class AgglomerativeClustering<T extends Signature> extends DefaultCluster
 		@Override
 		public List<AgglomerativeClusteringSingleDistance> call() throws Exception {
 			List<AgglomerativeClusteringSingleDistance> distances = new ArrayList<AgglomerativeClusteringSingleDistance>();
-			for (int i = start; i < end; i++) {
+			for (int i = start; i <= end; i++) {
 				for (int j = i + 1; j < points.size(); j++) {
 					AgglomerativeClusteringSingleDistance sd = new AgglomerativeClusteringSingleDistance();
 					sd.i = i;
@@ -77,23 +77,24 @@ public class AgglomerativeClustering<T extends Signature> extends DefaultCluster
 		log("AgglomerativeClustering - Distances cache");
 		TaskManager tm = TaskManager.getSecondLevelInstance();
 		int nbSplit = tm.getCorePoolSize();
-		int nb = points.size() * points.size() / 2;
+		int nb = (points.size() - 1) * points.size() / 2;
 		int splitSize = nb / nbSplit;
 		
 		int done = 0;
 		int start = 0;
 		List<Future<List<AgglomerativeClusteringSingleDistance>>> results = new ArrayList<Future<List<AgglomerativeClusteringSingleDistance>>>();
-		for (int end = 1; end < points.size(); end++) {
-			done += (points.size() - end);
+		for (int end = 0; end < points.size(); end++) {
+			done += (points.size() - 1 - end);
 			if (done > splitSize) {
 				results.add(tm.submit(new ComputeDistancesWorker(points, start, end)));
 				done = 0;
-				start = end;
+				start = end + 1;
 			}
 		}
 		if (done > 0) {
 			results.add(tm.submit(new ComputeDistancesWorker(points, start, points.size())));
 		}
+		
 		for (Future<List<AgglomerativeClusteringSingleDistance>> f : results) {
 			try {
 				distances.addAll(f.get());
@@ -104,13 +105,9 @@ public class AgglomerativeClustering<T extends Signature> extends DefaultCluster
 			}
 		}
 		
+		log("AgglomerativeClustering - nb = " + nb + " / results = " + distances.size());
+		
 		// log("AgglomerativeClustering - Distances : " + distances.size() + " / " + idx(points.size() - 1, points.size() - 1, points.size()));
-		log("AgglomerativeClustering - Getting distances");
-		int s = points.size();
-//		AgglomerativeClusteringSingleDistance[] dt = new AgglomerativeClusteringSingleDistance[s * (s + 1) / 2];
-//		for (AgglomerativeClusteringSingleDistance sd : distances) {
-//			dt[idx(sd.i, sd.j, s)] = sd; 
-//		}
 		
 		log("AgglomerativeClustering - Sorting distances");
 		
