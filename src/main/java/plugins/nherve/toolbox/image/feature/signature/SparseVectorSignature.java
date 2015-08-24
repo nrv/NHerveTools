@@ -1,19 +1,19 @@
 /*
  * Copyright 2010, 2011 Institut Pasteur.
  * Copyright 2012 Institut National de l'Audiovisuel.
- * 
+ *
  * This file is part of NHerveTools.
- * 
+ *
  * NHerveTools is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * NHerveTools is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with NHerveTools. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,11 +21,12 @@ package plugins.nherve.toolbox.image.feature.signature;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 /**
  * The Class SparseVectorSignature.
- * 
+ *
  * @author Nicolas HERVE - nherve@ina.fr
  */
 public class SparseVectorSignature extends VectorSignature {
@@ -38,7 +39,7 @@ public class SparseVectorSignature extends VectorSignature {
 
 	/**
 	 * Instantiates a new sparse vector signature.
-	 * 
+	 *
 	 * @param size
 	 *            the size
 	 */
@@ -52,11 +53,26 @@ public class SparseVectorSignature extends VectorSignature {
 	// this(0);
 	// }
 
+	@Override
+	public void add(VectorSignature other) throws SignatureException {
+		if (other instanceof SparseVectorSignature) {
+			int idx = 0;
+			Double v = null;
+			SparseVectorSignature o = (SparseVectorSignature) other;
+			for (Entry<Integer, Double> e : o.data.entrySet()) {
+				idx = e.getKey();
+				v = data.get(idx);
+				data.put(idx, (v == null ? 0 : v) + e.getValue());
+			}
+		} else {
+			super.add(other);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * plugins.nherve.toolbox.image.feature.signature.VectorSignature#clone()
+	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#clone()
 	 */
 	@Override
 	public SparseVectorSignature clone() throws CloneNotSupportedException {
@@ -74,9 +90,7 @@ public class SparseVectorSignature extends VectorSignature {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * plugins.nherve.toolbox.image.feature.signature.VectorSignature#concat
-	 * (plugins.nherve.toolbox.image.feature.signature.VectorSignature)
+	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#concat (plugins.nherve.toolbox.image.feature.signature.VectorSignature)
 	 */
 	@Override
 	public void concat(VectorSignature other) throws SignatureException {
@@ -104,28 +118,36 @@ public class SparseVectorSignature extends VectorSignature {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * plugins.nherve.toolbox.image.feature.signature.VectorSignature#get(int)
+	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#get(int)
 	 */
 	@Override
 	public double get(int idx) throws SignatureException {
 		Double res = data.get(idx);
-		
-		if (res != null) return res;
-		
+
+		if (res != null) {
+			return res;
+		}
+
 		if ((idx < 0) || (idx >= size)) {
 			throw new SignatureException("Invalid signature index (" + idx + ")");
 		}
-		
+
 		return 0;
+	}
+
+	/**
+	 * Gets the data.
+	 *
+	 * @return the data
+	 */
+	public Map<Integer, Double> getData() {
+		return data;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * plugins.nherve.toolbox.image.feature.signature.VectorSignature#getNonZeroBins
-	 * ()
+	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#getNonZeroBins ()
 	 */
 	@Override
 	public int getNonZeroBins() throws SignatureException {
@@ -135,8 +157,7 @@ public class SparseVectorSignature extends VectorSignature {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * plugins.nherve.toolbox.image.feature.signature.VectorSignature#getSize()
+	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#getSize()
 	 */
 	@Override
 	public int getSize() {
@@ -145,10 +166,36 @@ public class SparseVectorSignature extends VectorSignature {
 
 	/*
 	 * (non-Javadoc)
+	 *
+	 * @see java.lang.Iterable#iterator()
+	 */
+	@Override
+	public Iterator<Integer> iterator() {
+		return data.keySet().iterator();
+	}
+
+	@Override
+	public void multiply(double coef) throws SignatureException {
+		for (int idx : this) {
+			data.put(idx, data.get(idx) * coef);
+		}
+	}
+
+	@Override
+	public double norm() throws SignatureException {
+		double norm = 0;
+		for (Entry<Integer, Double> e : data.entrySet()) {
+			double v = e.getValue();
+			norm += v * v;
+		}
+
+		return Math.sqrt(norm);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * plugins.nherve.toolbox.image.feature.signature.VectorSignature#set(int,
-	 * double)
+	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#set(int, double)
 	 */
 	@Override
 	public void set(int idx, double val) throws SignatureException {
@@ -161,25 +208,6 @@ public class SparseVectorSignature extends VectorSignature {
 		} else {
 			data.put(idx, val);
 		}
-	}
-
-	/**
-	 * Gets the data.
-	 * 
-	 * @return the data
-	 */
-	public Map<Integer, Double> getData() {
-		return data;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Iterable#iterator()
-	 */
-	@Override
-	public Iterator<Integer> iterator() {
-		return data.keySet().iterator();
 	}
 
 	@Override
