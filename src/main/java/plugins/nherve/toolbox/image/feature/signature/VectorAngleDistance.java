@@ -127,19 +127,17 @@ public class VectorAngleDistance extends SignatureDistance<VectorSignature> {
 		}
 
 		double sq = Math.sqrt(sqsum1 * sqsum2);
-
-		if ((sq == 0.) || (dist == 0.)) {
-			dist = 2.;
-		} else {
-			double r = dist / sq;
-			if (r > 1) {
-				dist = 0;
-			} else {
-				dist = Math.acos(r);
-			}
+		
+		if (sq == 0.) {
+			return 0;
 		}
-
-		return dist;
+		
+		double r = dist / sq;
+		if (Math.abs(r) > 1) {
+			return 0;
+		}
+		
+		return 2 * Math.acos(r) / Math.PI;
 	}
 
 }

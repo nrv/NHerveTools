@@ -16,11 +16,15 @@ public class TestDistances {
 
 	public static Random rd = new Random(1586412l);
 
-	public static double[] randomData(int dim, double sparsity) {
+	public static double[] randomData(int dim, double sparsity, boolean negValues) {
 		double[] data = new double[dim];
 		for (int d = 0; d < dim; d++) {
 			if (rd.nextDouble() >= sparsity) {
-				data[d] = rd.nextDouble();
+				if (negValues) {
+					data[d] = 1 - 2 * rd.nextDouble();
+				} else {
+					data[d] = rd.nextDouble();
+				}
 			} else {
 				data[d] = 0.;
 			}
@@ -28,14 +32,14 @@ public class TestDistances {
 		return data;
 	}
 
-	public static void test(int dim, double sparsity, int nb) throws SignatureException {
+	public static void test(int dim, double sparsity, int nb, boolean negValues, boolean norm) throws SignatureException {
 		final int sigType = 3;
 		final int distType = 3;
 
 		VectorSignature[][] sigs = new VectorSignature[sigType][nb];
 
 		for (int n = 0; n < nb; n++) {
-			double[] data = randomData(dim, sparsity);
+			double[] data = randomData(dim, sparsity, negValues);
 			DenseVectorSignature dense = new DenseVectorSignature(dim);
 			SparseVectorSignature sparse = new SparseVectorSignature(dim);
 			DynamicSparseVectorSignature dynamic = new DynamicSparseVectorSignature();
@@ -43,6 +47,11 @@ public class TestDistances {
 				dense.set(d, data[d]);
 				sparse.set(d, data[d]);
 				dynamic.set(d, data[d]);
+			}
+			if (norm) {
+				dense.normalizeL2(false);
+				sparse.normalizeL2(false);
+				dynamic.normalizeL2(false);
 			}
 			sigs[0][n] = dense;
 			sigs[1][n] = sparse;
@@ -85,7 +94,10 @@ public class TestDistances {
 			for (int dim = 2; dim < 100; dim++) {
 				for (double sparsity = 0; sparsity < 0.9; sparsity += 0.1) {
 					System.out.println("test(" + dim + ", " + sparsity + ", 10);");
-					test(dim, sparsity, 10);
+					test(dim, sparsity, 10, true, true);
+					test(dim, sparsity, 10, false, true);
+					test(dim, sparsity, 10, true, false);
+					test(dim, sparsity, 10, false, false);
 				}
 			}
 		} catch (SignatureException e) {
