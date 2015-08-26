@@ -19,10 +19,16 @@
  */
 package plugins.nherve.toolbox.image.feature.signature;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * The Class SparseVectorSignature.
@@ -166,12 +172,34 @@ public class SparseVectorSignature extends VectorSignature {
 
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
 	public Iterator<Integer> iterator() {
 		return data.keySet().iterator();
+	}
+
+	public void keepTopK(int k) {
+		if (k < data.size()) {
+			List<Entry<Integer, Double>> sorted = new ArrayList<Map.Entry<Integer, Double>>();
+			sorted.addAll(data.entrySet());
+			Collections.sort(sorted, new Comparator<Entry<Integer, Double>>() {
+
+				@Override
+				public int compare(Entry<Integer, Double> o1, Entry<Integer, Double> o2) {
+					return Double.compare(o1.getValue(), o2.getValue());
+				}
+			});
+
+			Set<Integer> toRemove = new TreeSet<Integer>();
+			for (Entry<Integer, Double> e : sorted.subList(k, sorted.size())) {
+				toRemove.add(e.getKey());
+			}
+			for (int idx : toRemove) {
+				data.remove(idx);
+			}
+		}
 	}
 
 	@Override
