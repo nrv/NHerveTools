@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import plugins.nherve.toolbox.Algorithm;
 
@@ -261,6 +262,25 @@ public class TaskManager extends Algorithm {
 	public synchronized void shutdown() {
 		if (threadPool != null) {
 			threadPool.shutdown();
+
+			if (this == main) {
+				main = null;
+			}
+
+			if (this == secondLevel) {
+				secondLevel = null;
+			}
+		}
+	}
+
+	public synchronized void shutdownAndWait() {
+		if (threadPool != null) {
+			threadPool.shutdown();
+			try {
+				threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+			} catch (InterruptedException e) {
+				// ignore
+			}
 
 			if (this == main) {
 				main = null;
