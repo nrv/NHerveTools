@@ -31,8 +31,10 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import plugins.nherve.toolbox.Algorithm;
 
@@ -42,6 +44,31 @@ import plugins.nherve.toolbox.Algorithm;
  * @author Nicolas HERVE - nherve@ina.fr
  */
 public class TaskManager extends Algorithm {
+
+	static class TaskManagerThreadFactory implements ThreadFactory {
+		private static final AtomicInteger poolNumber = new AtomicInteger(1);
+		private final ThreadGroup group;
+		private final AtomicInteger threadNumber = new AtomicInteger(1);
+		private final String namePrefix;
+
+		TaskManagerThreadFactory(String pfx) {
+			SecurityManager s = System.getSecurityManager();
+			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+			namePrefix = pfx + "-" + poolNumber.getAndIncrement() + "-thread-";
+		}
+
+		@Override
+		public Thread newThread(Runnable r) {
+			Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+			if (t.isDaemon()) {
+				t.setDaemon(false);
+			}
+			if (t.getPriority() != Thread.NORM_PRIORITY) {
+				t.setPriority(Thread.NORM_PRIORITY);
+			}
+			return t;
+		}
+	}
 
 	/** The Constant DEFAULT_NBT. */
 	private final static int DEFAULT_NBT = Runtime.getRuntime().availableProcessors();
@@ -53,11 +80,19 @@ public class TaskManager extends Algorithm {
 	private static TaskManager secondLevel;
 
 	public static synchronized TaskManager create() {
-		return create(DEFAULT_NBT);
+		return create("pool");
 	}
 
 	public static synchronized TaskManager create(int preferedSize) {
-		return new TaskManager(preferedSize);
+		return new TaskManager("pool", preferedSize);
+	}
+
+	public static synchronized TaskManager create(String pfx) {
+		return create(pfx, DEFAULT_NBT);
+	}
+
+	public static synchronized TaskManager create(String pfx, int preferedSize) {
+		return new TaskManager(pfx, preferedSize);
 	}
 
 	/**
@@ -78,7 +113,7 @@ public class TaskManager extends Algorithm {
 	 */
 	public static synchronized TaskManager getMainInstance(int preferedSize) {
 		if (main == null) {
-			main = new TaskManager(preferedSize);
+			main = new TaskManager("main", preferedSize);
 		}
 
 		return main;
@@ -102,7 +137,7 @@ public class TaskManager extends Algorithm {
 	 */
 	public static synchronized TaskManager getSecondLevelInstance(int preferedSize) {
 		if (secondLevel == null) {
-			secondLevel = new TaskManager(preferedSize);
+			secondLevel = new TaskManager("second", preferedSize);
 		}
 
 		return secondLevel;
@@ -170,7 +205,11 @@ public class TaskManager extends Algorithm {
 	private boolean showProgress;
 
 	public TaskManager() {
-		this(DEFAULT_NBT);
+		this("pool");
+	}
+	
+	public TaskManager(String pfx) {
+		this(pfx, DEFAULT_NBT);
 	}
 
 	/**
@@ -179,9 +218,10 @@ public class TaskManager extends Algorithm {
 	 * @param nbt
 	 *            the nbt
 	 */
-	public TaskManager(int nbt) {
+	public TaskManager(String pfx, int nbt) {
 		super();
-		threadPool = (ThreadPoolExecutor) (Executors.newFixedThreadPool(nbt));
+
+		threadPool = (ThreadPoolExecutor) (Executors.newFixedThreadPool(nbt, new TaskManagerThreadFactory(pfx)));
 		threadPool.prestartAllCoreThreads();
 
 		setShowProgress(true);
