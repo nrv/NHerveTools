@@ -55,7 +55,7 @@ public class TestDistances {
 	public void test(int dim, double sparsity, int nb, boolean negValues, boolean norm) throws SignatureException {
 		System.out.println("test(" + dim + ", " + sparsity + ", " + nb + ", " + negValues + ", " + norm + ")");
 		final int sigType = 3;
-		final int distType = 3;
+		final int distType = 4;
 
 		VectorSignature[][] sigs = new VectorSignature[sigType][nb];
 
@@ -83,6 +83,7 @@ public class TestDistances {
 		dist[0] = new L1Distance();
 		dist[1] = new L2Distance();
 		dist[2] = new VectorAngleDistance();
+		dist[3] = new VectorAngleDistance(true);
 
 		for (int i = 0; i < nb; i++) {
 			for (int j = 0; j < nb; j++) {

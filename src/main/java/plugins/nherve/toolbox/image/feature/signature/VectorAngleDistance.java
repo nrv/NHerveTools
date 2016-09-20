@@ -1,18 +1,18 @@
 /*
  * Copyright 2012 Institut National de l'Audiovisuel.
- * 
+ *
  * This file is part of NHerveTools.
- * 
+ *
  * NHerveTools is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * NHerveTools is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with NHerveTools. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -24,13 +24,19 @@ import plugins.nherve.toolbox.image.feature.SignatureDistance;
 
 /**
  * The Class VectorAngleDistance.
- * 
+ *
  * @author Nicolas HERVE - nherve@ina.fr
  */
 public class VectorAngleDistance extends SignatureDistance<VectorSignature> {
+	private boolean similarity;
 
 	public VectorAngleDistance() {
+		this(false);
+	}
+
+	public VectorAngleDistance(boolean similarity) {
 		super();
+		setSimilarity(similarity);
 	}
 
 	@Override
@@ -47,7 +53,7 @@ public class VectorAngleDistance extends SignatureDistance<VectorSignature> {
 		double sqsum1 = 0.0;
 		double sqsum2 = 0.0;
 
-		if (vs1 instanceof SparseVectorSignature && vs2 instanceof SparseVectorSignature) {
+		if ((vs1 instanceof SparseVectorSignature) && (vs2 instanceof SparseVectorSignature)) {
 			SparseVectorSignature s1 = (SparseVectorSignature) vs1;
 			SparseVectorSignature s2 = (SparseVectorSignature) vs2;
 
@@ -105,7 +111,7 @@ public class VectorAngleDistance extends SignatureDistance<VectorSignature> {
 				}
 			}
 
-		} else if (vs1 instanceof DenseVectorSignature && vs2 instanceof DenseVectorSignature) {
+		} else if ((vs1 instanceof DenseVectorSignature) && (vs2 instanceof DenseVectorSignature)) {
 			double[] s1 = ((DenseVectorSignature) vs1).getData();
 			double[] s2 = ((DenseVectorSignature) vs2).getData();
 
@@ -127,30 +133,38 @@ public class VectorAngleDistance extends SignatureDistance<VectorSignature> {
 		}
 
 		double sq = Math.sqrt(sqsum1 * sqsum2);
-		
-//		if ((sq == 0.) || (dist == 0.)) {
-//			dist = 2.;
-//		} else {
-//			double r = dist / sq;
-//			if (r > 1) {
-//				dist = 0;
-//			} else {
-//				dist = Math.acos(r);
-//			}
-//		}
-//
-//		return dist;		
-		
+
+		// if ((sq == 0.) || (dist == 0.)) {
+		// dist = 2.;
+		// } else {
+		// double r = dist / sq;
+		// if (r > 1) {
+		// dist = 0;
+		// } else {
+		// dist = Math.acos(r);
+		// }
+		// }
+		//
+		// return dist;
+
 		if (sq == 0.) {
-			return 1.;
+			return similarity ? 0. : 1.;
 		}
-		
+
 		double r = dist / sq;
 		if (Math.abs(r) > 1) {
-			return 0;
+			return similarity ? 1. : 0.;
 		}
-		
-		return 2 * Math.acos(r) / Math.PI;
+
+		return similarity ? r : (2 * Math.acos(r)) / Math.PI;
+	}
+
+	public boolean isSimilarity() {
+		return similarity;
+	}
+
+	public void setSimilarity(boolean similarity) {
+		this.similarity = similarity;
 	}
 
 }
