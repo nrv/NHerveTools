@@ -33,7 +33,7 @@ import plugins.nherve.toolbox.image.ImageLoader;
 import plugins.nherve.toolbox.image.feature.FeatureException;
 import plugins.nherve.toolbox.image.feature.SegmentableImage;
 import plugins.nherve.toolbox.image.feature.signature.BagOfSignatures;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignatureConcatenator;
 
 /**
@@ -307,7 +307,7 @@ public class ImageDatabase<T extends SegmentableImage> implements Iterable<Image
 	 * @throws FeatureException
 	 *             the feature exception
 	 */
-	public VectorSignature getGlobalSignature(ImageEntry<T> entry, String descs) throws FeatureException {
+	public DefaultVectorSignature getGlobalSignature(ImageEntry<T> entry, String descs) throws FeatureException {
 		StringTokenizer stk = new StringTokenizer(descs, DESC_SEPARATOR);
 		String[] desc = new String[stk.countTokens()];
 		int tk = 0;
@@ -325,13 +325,13 @@ public class ImageDatabase<T extends SegmentableImage> implements Iterable<Image
 			throw new FeatureException("No descriptor asked for database " + getName());
 		}
 
-		VectorSignature res = null;
+		DefaultVectorSignature res = null;
 
 		if (desc.length > 1) {
-			VectorSignatureConcatenator concat = new VectorSignatureConcatenator(VectorSignature.DENSE_VECTOR_SIGNATURE, false);
+			VectorSignatureConcatenator concat = new VectorSignatureConcatenator(DefaultVectorSignature.DENSE_VECTOR_SIGNATURE, false);
 
 			for (String d : desc) {
-				VectorSignature[] vsa = new VectorSignature[entries.size()];
+				DefaultVectorSignature[] vsa = new DefaultVectorSignature[entries.size()];
 				int idx = 0;
 				for (ImageEntry<T> e : entries) {
 					vsa[idx] = e.getGlobalSignatures().get(d);
@@ -361,7 +361,7 @@ public class ImageDatabase<T extends SegmentableImage> implements Iterable<Image
 	 * @throws FeatureException
 	 *             the feature exception
 	 */
-	public List<VectorSignature> getGlobalSignatures(List<ImageEntry<T>> entries, String descs) throws FeatureException {
+	public List<DefaultVectorSignature> getGlobalSignatures(List<ImageEntry<T>> entries, String descs) throws FeatureException {
 		StringTokenizer stk = new StringTokenizer(descs, DESC_SEPARATOR);
 		String[] desc = new String[stk.countTokens()];
 		int tk = 0;
@@ -379,13 +379,13 @@ public class ImageDatabase<T extends SegmentableImage> implements Iterable<Image
 			throw new FeatureException("No descriptor asked for database " + getName());
 		}
 
-		List<VectorSignature> res = null;
+		List<DefaultVectorSignature> res = null;
 
 		if (desc.length > 1) {
-			VectorSignatureConcatenator concat = new VectorSignatureConcatenator(VectorSignature.DENSE_VECTOR_SIGNATURE, true);
+			VectorSignatureConcatenator concat = new VectorSignatureConcatenator(DefaultVectorSignature.DENSE_VECTOR_SIGNATURE, true);
 
 			for (String d : desc) {
-				VectorSignature[] vsa = new VectorSignature[entries.size()];
+				DefaultVectorSignature[] vsa = new DefaultVectorSignature[entries.size()];
 				int idx = 0;
 				for (ImageEntry<T> e : entries) {
 					vsa[idx] = e.getGlobalSignatures().get(d);
@@ -398,7 +398,7 @@ public class ImageDatabase<T extends SegmentableImage> implements Iterable<Image
 			res = Arrays.asList(concat.concatenate());
 		} else {
 			String d = desc[0];
-			res = new ArrayList<VectorSignature>();
+			res = new ArrayList<DefaultVectorSignature>();
 			for (ImageEntry<T> e : entries) {
 				res.add(e.getGlobalSignatures().get(d));
 			}
@@ -416,7 +416,7 @@ public class ImageDatabase<T extends SegmentableImage> implements Iterable<Image
 	 * @throws FeatureException
 	 *             the feature exception
 	 */
-	public List<VectorSignature> getGlobalSignatures(String descs) throws FeatureException {
+	public List<DefaultVectorSignature> getGlobalSignatures(String descs) throws FeatureException {
 		return getGlobalSignatures(entries, descs);
 	}
 
@@ -440,7 +440,7 @@ public class ImageDatabase<T extends SegmentableImage> implements Iterable<Image
 	 * @throws FeatureException
 	 *             the feature exception
 	 */
-	public BagOfSignatures<VectorSignature> getLocalSignature(ImageEntry<T> entry, String desc) throws FeatureException {
+	public BagOfSignatures<DefaultVectorSignature> getLocalSignature(ImageEntry<T> entry, String desc) throws FeatureException {
 		if (!availableLocalDescriptors.contains(desc)) {
 			throw new FeatureException("Descriptor " + desc + " not available for database " + getName());
 		}
@@ -456,11 +456,11 @@ public class ImageDatabase<T extends SegmentableImage> implements Iterable<Image
 	 * @throws FeatureException
 	 *             the feature exception
 	 */
-	public List<VectorSignature> getLocalSignatures(String desc) throws FeatureException {
+	public List<DefaultVectorSignature> getLocalSignatures(String desc) throws FeatureException {
 		if (!availableLocalDescriptors.contains(desc)) {
 			throw new FeatureException("Descriptor " + desc + " not available for database " + getName());
 		}
-		List<VectorSignature> all = new ArrayList<VectorSignature>();
+		List<DefaultVectorSignature> all = new ArrayList<DefaultVectorSignature>();
 		for (ImageEntry<T> entry : this) {
 			all.addAll(entry.getLocalSignatures().get(desc).getSignatures());
 		}

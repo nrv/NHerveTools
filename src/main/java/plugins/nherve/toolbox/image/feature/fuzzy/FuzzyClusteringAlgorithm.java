@@ -22,7 +22,7 @@ import java.util.List;
 
 import plugins.nherve.toolbox.image.feature.ClusteringAlgorithm;
 import plugins.nherve.toolbox.image.feature.clustering.ClusteringException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 
 /**
@@ -30,7 +30,7 @@ import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
  * 
  * @author Nicolas HERVE - nicolas.herve@pasteur.fr
  */
-public interface FuzzyClusteringAlgorithm extends ClusteringAlgorithm<VectorSignature> {
+public interface FuzzyClusteringAlgorithm extends ClusteringAlgorithm<DefaultVectorSignature> {
 	
 	/**
 	 * Gets the memberships.
@@ -41,7 +41,7 @@ public interface FuzzyClusteringAlgorithm extends ClusteringAlgorithm<VectorSign
 	 * @throws ClusteringException
 	 *             the clustering exception
 	 */
-	double[] getMemberships(VectorSignature point) throws ClusteringException;
+	double[] getMemberships(DefaultVectorSignature point) throws ClusteringException;
 	
 	/**
 	 * Gets the memberships.
@@ -54,7 +54,7 @@ public interface FuzzyClusteringAlgorithm extends ClusteringAlgorithm<VectorSign
 	 * @throws ClusteringException
 	 *             the clustering exception
 	 */
-	double[] getMemberships(VectorSignature point, List<Integer> clustersToConsider) throws ClusteringException;
+	double[] getMemberships(DefaultVectorSignature point, List<Integer> clustersToConsider) throws ClusteringException;
 	
 	/**
 	 * Gets the memberships.
@@ -67,7 +67,7 @@ public interface FuzzyClusteringAlgorithm extends ClusteringAlgorithm<VectorSign
 	 * @throws ClusteringException
 	 *             the clustering exception
 	 */
-	double[] getMemberships(List<VectorSignature> point, int cluster) throws ClusteringException;
+	double[] getMemberships(List<DefaultVectorSignature> point, int cluster) throws ClusteringException;
 	
 	/**
 	 * Gets the memberships.
@@ -80,22 +80,7 @@ public interface FuzzyClusteringAlgorithm extends ClusteringAlgorithm<VectorSign
 	 * @throws ClusteringException
 	 *             the clustering exception
 	 */
-	double[] getMemberships(VectorSignature[] point, int cluster) throws ClusteringException;
-	
-	/**
-	 * Gets the memberships.
-	 * 
-	 * @param point
-	 *            the point
-	 * @param cluster
-	 *            the cluster
-	 * @param clustersToConsider
-	 *            the clusters to consider
-	 * @return the memberships
-	 * @throws ClusteringException
-	 *             the clustering exception
-	 */
-	double[] getMemberships(List<VectorSignature> point, int cluster, List<Integer> clustersToConsider) throws ClusteringException;
+	double[] getMemberships(DefaultVectorSignature[] point, int cluster) throws ClusteringException;
 	
 	/**
 	 * Gets the memberships.
@@ -110,5 +95,20 @@ public interface FuzzyClusteringAlgorithm extends ClusteringAlgorithm<VectorSign
 	 * @throws ClusteringException
 	 *             the clustering exception
 	 */
-	double[] getMemberships(VectorSignature[] point, int cluster, List<Integer> clustersToConsider) throws ClusteringException;
+	double[] getMemberships(List<DefaultVectorSignature> point, int cluster, List<Integer> clustersToConsider) throws ClusteringException;
+	
+	/**
+	 * Gets the memberships.
+	 * 
+	 * @param point
+	 *            the point
+	 * @param cluster
+	 *            the cluster
+	 * @param clustersToConsider
+	 *            the clusters to consider
+	 * @return the memberships
+	 * @throws ClusteringException
+	 *             the clustering exception
+	 */
+	double[] getMemberships(DefaultVectorSignature[] point, int cluster, List<Integer> clustersToConsider) throws ClusteringException;
 }

@@ -42,7 +42,7 @@ import plugins.nherve.toolbox.image.feature.signature.DenseVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.IndexSignature;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.SparseVectorSignature;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 /**
  * The Class PersistenceToolbox.
@@ -98,9 +98,9 @@ public class PersistenceToolbox {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static void dumpBagOfSignatures(FileChannel fc, BagOfSignatures<VectorSignature> s) throws IOException {
+	public static void dumpBagOfSignatures(FileChannel fc, BagOfSignatures<DefaultVectorSignature> s) throws IOException {
 		dumpInt(fc, s.size());
-		for (VectorSignature vs : s) {
+		for (DefaultVectorSignature vs : s) {
 			dumpSignature(fc, vs);
 		}
 	}
@@ -274,11 +274,11 @@ public class PersistenceToolbox {
 			dumpSparseVectorSignature(fc, (SparseVectorSignature) s);
 		} else if (s instanceof BagOfSignatures<?>) {
 			dumpInt(fc, BAG_TYPE);
-			dumpBagOfSignatures(fc, (BagOfSignatures<VectorSignature>) s);
+			dumpBagOfSignatures(fc, (BagOfSignatures<DefaultVectorSignature>) s);
 		} else if (HOOKS_BY_CLASS.containsKey(s.getClass())) {
-			SignaturePersistenceHook<? extends VectorSignature> hook = HOOKS_BY_CLASS.get(s.getClass());
+			SignaturePersistenceHook<? extends DefaultVectorSignature> hook = HOOKS_BY_CLASS.get(s.getClass());
 			dumpInt(fc, hook.getTypeCode());
-			hook.dumpSignature(fc, (VectorSignature)s);
+			hook.dumpSignature(fc, (DefaultVectorSignature)s);
 		} else {
 			throw new IOException("dumpSignature(" + s.getClass().getName() + ") not yet implemented");
 		}
@@ -377,7 +377,7 @@ public class PersistenceToolbox {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static BagOfSignatures<VectorSignature> loadBagOfSignatures(FileChannel fc) throws IOException {
+	public static BagOfSignatures<DefaultVectorSignature> loadBagOfSignatures(FileChannel fc) throws IOException {
 		int type = loadInt(fc);
 		if (type == NULL_TYPE) {
 			return null;
@@ -386,7 +386,7 @@ public class PersistenceToolbox {
 			throw new IOException("Unknown BagOfSignatures type (" + type + ")");
 		}
 		int sz = loadInt(fc);
-		BagOfSignatures<VectorSignature> bag = new BagOfSignatures<VectorSignature>();
+		BagOfSignatures<DefaultVectorSignature> bag = new BagOfSignatures<DefaultVectorSignature>();
 		for (int i = 0; i < sz; i++) {
 			bag.add(loadVectorSignature(fc));
 		}
@@ -597,7 +597,7 @@ public class PersistenceToolbox {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public static VectorSignature loadVectorSignature(FileChannel fc) throws IOException {
+	public static DefaultVectorSignature loadVectorSignature(FileChannel fc) throws IOException {
 		int type = loadInt(fc);
 		switch (type) {
 		case NULL_TYPE:

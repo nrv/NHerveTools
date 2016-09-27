@@ -29,6 +29,7 @@ import plugins.nherve.toolbox.image.feature.FeatureException;
 import plugins.nherve.toolbox.image.feature.SignatureDistance;
 import plugins.nherve.toolbox.image.feature.signature.L2Distance;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 
 
@@ -37,13 +38,13 @@ import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
  * 
  * @author Nicolas HERVE - nicolas.herve@pasteur.fr
  */
-public class RandomClustering extends DefaultClusteringAlgorithmImpl<VectorSignature> implements Distance<VectorSignature> {
+public class RandomClustering extends DefaultClusteringAlgorithmImpl<DefaultVectorSignature> implements Distance<DefaultVectorSignature> {
 	
 	/** The nb classes. */
 	private int nbClasses;
 	
 	/** The centroids. */
-	private List<VectorSignature> centroids;
+	private List<DefaultVectorSignature> centroids;
 	
 	/** The distance. */
 	private SignatureDistance<VectorSignature> distance;
@@ -71,9 +72,9 @@ public class RandomClustering extends DefaultClusteringAlgorithmImpl<VectorSigna
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	private List<VectorSignature> randomDistinct(List<VectorSignature> from, int nb) throws SignatureException {
+	private List<DefaultVectorSignature> randomDistinct(List<DefaultVectorSignature> from, int nb) throws SignatureException {
 		try {
-			List<VectorSignature> ctd = new ArrayList<VectorSignature>();
+			List<DefaultVectorSignature> ctd = new ArrayList<DefaultVectorSignature>();
 			
 			Random rd = new Random(System.currentTimeMillis());
 			boolean[] affected = new boolean[from.size()];
@@ -113,7 +114,7 @@ public class RandomClustering extends DefaultClusteringAlgorithmImpl<VectorSigna
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#compute(java.util.List)
 	 */
 	@Override
-	public void compute(List<VectorSignature> points) throws ClusteringException {
+	public void compute(List<DefaultVectorSignature> points) throws ClusteringException {
 		try {
 			log("Random clustering on " + points.size() + " points");
 			centroids = randomDistinct(points, getNbClasses());
@@ -126,16 +127,16 @@ public class RandomClustering extends DefaultClusteringAlgorithmImpl<VectorSigna
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#getAffectations(java.util.List)
 	 */
 	@Override
-	public int[] getAffectations(List<VectorSignature> pts) throws ClusteringException {
+	public int[] getAffectations(List<DefaultVectorSignature> pts) throws ClusteringException {
 		int[] othAff = new int[pts.size()];
 
 		try {
 			int p = 0;
-			for (VectorSignature s : pts) {
+			for (DefaultVectorSignature s : pts) {
 				double minDist = Double.MAX_VALUE;
 				int closestCentroid = 0;
 				int c = 0;
-				for (VectorSignature ct : centroids) {
+				for (DefaultVectorSignature ct : centroids) {
 					double d = computeDistance(s, ct);
 					if (d < minDist) {
 						minDist = d;
@@ -159,7 +160,7 @@ public class RandomClustering extends DefaultClusteringAlgorithmImpl<VectorSigna
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#getCentroids()
 	 */
 	@Override
-	public List<VectorSignature> getCentroids() throws ClusteringException {
+	public List<DefaultVectorSignature> getCentroids() throws ClusteringException {
 		return centroids;
 	}
 
@@ -175,7 +176,7 @@ public class RandomClustering extends DefaultClusteringAlgorithmImpl<VectorSigna
 	 * @see plugins.nherve.toolbox.image.feature.Distance#computeDistance(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public double computeDistance(VectorSignature s1, VectorSignature s2) throws FeatureException {
+	public double computeDistance(DefaultVectorSignature s1, DefaultVectorSignature s2) throws FeatureException {
 		return distance.computeDistance(s1, s2);
 	}
 

@@ -14,6 +14,7 @@ import plugins.nherve.toolbox.image.feature.signature.L2Distance;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.SparseVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.VectorAngleDistance;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 
 public class TestDistances {
@@ -57,7 +58,7 @@ public class TestDistances {
 		final int sigType = 3;
 		final int distType = 4;
 
-		VectorSignature[][] sigs = new VectorSignature[sigType][nb];
+		DefaultVectorSignature[][] sigs = new DefaultVectorSignature[sigType][nb];
 
 		for (int n = 0; n < nb; n++) {
 			double[] data = randomData(dim, sparsity, negValues);

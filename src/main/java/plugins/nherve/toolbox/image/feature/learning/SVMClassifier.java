@@ -27,7 +27,7 @@ import java.util.List;
 import plugins.nherve.toolbox.image.db.ImageDatabaseSplit;
 import plugins.nherve.toolbox.image.feature.FeatureException;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.libsvm.svm;
 import plugins.nherve.toolbox.libsvm.svm_model;
 import plugins.nherve.toolbox.libsvm.svm_node;
@@ -76,8 +76,8 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public void createProblem(List<VectorSignature> positive) throws SignatureException {
-		VectorSignature[] p = (VectorSignature[]) positive.toArray(new VectorSignature[positive.size()]);
+	public void createProblem(List<DefaultVectorSignature> positive) throws SignatureException {
+		DefaultVectorSignature[] p = (DefaultVectorSignature[]) positive.toArray(new DefaultVectorSignature[positive.size()]);
 		createProblem(p);
 	}
 
@@ -91,9 +91,9 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public void createProblem(List<VectorSignature> positive, List<VectorSignature> negative) throws SignatureException {
-		VectorSignature[] p = (VectorSignature[]) positive.toArray(new VectorSignature[positive.size()]);
-		VectorSignature[] n = (VectorSignature[]) negative.toArray(new VectorSignature[negative.size()]);
+	public void createProblem(List<DefaultVectorSignature> positive, List<DefaultVectorSignature> negative) throws SignatureException {
+		DefaultVectorSignature[] p = (DefaultVectorSignature[]) positive.toArray(new DefaultVectorSignature[positive.size()]);
+		DefaultVectorSignature[] n = (DefaultVectorSignature[]) negative.toArray(new DefaultVectorSignature[negative.size()]);
 		createProblem(p, n);
 	}
 
@@ -105,11 +105,11 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public void createProblem(VectorSignature[] positive) throws SignatureException {
+	public void createProblem(DefaultVectorSignature[] positive) throws SignatureException {
 
 		log("SVM create problem pos(" + positive.length + ")");
 
-		sigSize = ((VectorSignature) positive[0]).getSize();
+		sigSize = ((DefaultVectorSignature) positive[0]).getSize();
 
 		param = new svm_parameter();
 
@@ -136,7 +136,7 @@ public class SVMClassifier extends LearningAlgorithm {
 		prob.y = new double[prob.l];
 
 		for (int i = 0; i < positive.length; i++) {
-			prob.x[i] = getNode((VectorSignature) positive[i]);
+			prob.x[i] = getNode((DefaultVectorSignature) positive[i]);
 			prob.y[i] = 1;
 		}
 	}
@@ -156,8 +156,8 @@ public class SVMClassifier extends LearningAlgorithm {
 	public void createProblem(ImageDatabaseSplit split, String posClass, String desc) throws ClassifierException {
 		try {
 			setModelInfo(posClass);
-			List<VectorSignature> pos = split.getLrnSignatures(posClass, true, desc);
-			List<VectorSignature> neg = split.getLrnSignatures(posClass, false, desc);
+			List<DefaultVectorSignature> pos = split.getLrnSignatures(posClass, true, desc);
+			List<DefaultVectorSignature> neg = split.getLrnSignatures(posClass, false, desc);
 			createProblem(pos, neg);
 		} catch (FeatureException e) {
 			throw new ClassifierException(e);
@@ -174,13 +174,13 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public void createProblem(VectorSignature[] positive, VectorSignature[] negative) throws SignatureException {
-		VectorSignature[] pa = positive;
-		VectorSignature[] na = negative;
+	public void createProblem(DefaultVectorSignature[] positive, DefaultVectorSignature[] negative) throws SignatureException {
+		DefaultVectorSignature[] pa = positive;
+		DefaultVectorSignature[] na = negative;
 
 		try {
 			if (hasDataProcessor() && (!isLearnDataProcessed())) {
-				VectorSignature[][] data = dataProcess(positive, negative);
+				DefaultVectorSignature[][] data = dataProcess(positive, negative);
 				pa = data[0];
 				na = data[1];
 			}
@@ -311,7 +311,7 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	private svm_node[] getNode(VectorSignature sig) throws SignatureException {
+	private svm_node[] getNode(DefaultVectorSignature sig) throws SignatureException {
 		svm_node[] x = new svm_node[sig.getNonZeroBins()];
 		int ix = 0;
 
@@ -329,7 +329,7 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @see plugins.nherve.toolbox.image.feature.learning.LearningAlgorithm#isPositiveImpl(plugins.nherve.toolbox.image.feature.signature.VectorSignature)
 	 */
 	@Override
-	protected boolean isPositiveImpl(VectorSignature sig) throws ClassifierException {
+	protected boolean isPositiveImpl(DefaultVectorSignature sig) throws ClassifierException {
 		try {
 			return predictImpl(sig) > 0;
 		} catch (SignatureException e) {
@@ -345,8 +345,8 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @throws ClassifierException
 	 *             the classifier exception
 	 */
-	public void learn(List<VectorSignature> positive) throws ClassifierException {
-		VectorSignature[] p = (VectorSignature[]) positive.toArray(new VectorSignature[positive.size()]);
+	public void learn(List<DefaultVectorSignature> positive) throws ClassifierException {
+		DefaultVectorSignature[] p = (DefaultVectorSignature[]) positive.toArray(new DefaultVectorSignature[positive.size()]);
 		learn(p);
 	}
 
@@ -358,7 +358,7 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @throws ClassifierException
 	 *             the classifier exception
 	 */
-	public void learn(VectorSignature[] positive) throws ClassifierException {
+	public void learn(DefaultVectorSignature[] positive) throws ClassifierException {
 		try {
 			createProblem(positive);
 			learnModel();
@@ -371,7 +371,7 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @see plugins.nherve.toolbox.image.feature.learning.LearningAlgorithm#learnImpl(plugins.nherve.toolbox.image.feature.signature.VectorSignature[], plugins.nherve.toolbox.image.feature.signature.VectorSignature[])
 	 */
 	@Override
-	protected void learnImpl(VectorSignature[] positive, VectorSignature[] negative) throws ClassifierException {
+	protected void learnImpl(DefaultVectorSignature[] positive, DefaultVectorSignature[] negative) throws ClassifierException {
 		try {
 			createProblem(positive, negative);
 			learnModel();
@@ -404,7 +404,7 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	private double predictImpl(VectorSignature sig) throws SignatureException {
+	private double predictImpl(DefaultVectorSignature sig) throws SignatureException {
 		svm_node[] x = getNode(sig);
 		return svm.svm_predict(model, x);
 	}
@@ -418,7 +418,7 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public double predict(VectorSignature sig) throws SignatureException {
+	public double predict(DefaultVectorSignature sig) throws SignatureException {
 		if (hasDataProcessor()) {
 			return predictImpl(getDataProcessor().apply(sig));
 		} else {
@@ -430,7 +430,7 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @see plugins.nherve.toolbox.image.feature.learning.LearningAlgorithm#scoreImpl(plugins.nherve.toolbox.image.feature.signature.VectorSignature)
 	 */
 	@Override
-	protected double scoreImpl(VectorSignature sig) throws ClassifierException {
+	protected double scoreImpl(DefaultVectorSignature sig) throws ClassifierException {
 		return SCORE_OFFSET + rawScore(sig);
 	}
 
@@ -443,7 +443,7 @@ public class SVMClassifier extends LearningAlgorithm {
 	 * @throws ClassifierException
 	 *             the classifier exception
 	 */
-	public double rawScore(VectorSignature sig) throws ClassifierException {
+	public double rawScore(DefaultVectorSignature sig) throws ClassifierException {
 		try {
 			double[] res = new double[1];
 			svm_node[] x = getNode(sig);

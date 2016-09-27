@@ -39,7 +39,7 @@ import plugins.nherve.toolbox.image.feature.descriptor.LocalDescriptor;
 import plugins.nherve.toolbox.image.feature.region.Pixel;
 import plugins.nherve.toolbox.image.feature.signature.BagOfSignatures;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 /**
  * The Class ImageDatabaseIndexer.
@@ -138,11 +138,11 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 									srCache.put(srn, sr);
 								}
 							}
-							LocalDescriptor<T, VectorSignature, Pixel> desc = localDescriptors.get(name);
+							LocalDescriptor<T, DefaultVectorSignature, Pixel> desc = localDescriptors.get(name);
 							desc.preProcess(sbi);
-							BagOfSignatures<VectorSignature> bag = new BagOfSignatures<VectorSignature>();
+							BagOfSignatures<DefaultVectorSignature> bag = new BagOfSignatures<DefaultVectorSignature>();
 							for (SupportRegion reg : sr) {
-								VectorSignature sig = desc.extractLocalSignature(sbi, reg);
+								DefaultVectorSignature sig = desc.extractLocalSignature(sbi, reg);
 								bag.add(sig);
 							}
 							desc.postProcess(sbi);
@@ -155,9 +155,9 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 					for (String name : globalDescriptors.keySet()) {
 						if (!isDoOnlyMissingStuff() || !e.getGlobalSignatures().containsKey(name)) {
 							loadImage();
-							GlobalDescriptor<T, VectorSignature> desc = globalDescriptors.get(name);
+							GlobalDescriptor<T, DefaultVectorSignature> desc = globalDescriptors.get(name);
 							desc.preProcess(sbi);
-							VectorSignature sig = desc.extractGlobalSignature(sbi);
+							DefaultVectorSignature sig = desc.extractGlobalSignature(sbi);
 							desc.postProcess(sbi);
 							e.putSignature(name, sig);
 							countProcessed++;
@@ -169,9 +169,9 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 					for (String name : entryDescriptors.keySet()) {
 						if (!isDoOnlyMissingStuff() || !e.getGlobalSignatures().containsKey(name)) {
 							loadImage();
-							GlobalDescriptor<ImageEntry<T>, VectorSignature> desc = entryDescriptors.get(name);
+							GlobalDescriptor<ImageEntry<T>, DefaultVectorSignature> desc = entryDescriptors.get(name);
 							desc.preProcess(e);
-							VectorSignature sig = desc.extractGlobalSignature(e);
+							DefaultVectorSignature sig = desc.extractGlobalSignature(e);
 							desc.postProcess(e);
 							e.putSignature(name, sig);
 						}
@@ -215,19 +215,19 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 	private ImageDatabase<T> db;
 
 	/** The global descriptors. */
-	private Map<String, GlobalDescriptor<T, VectorSignature>> globalDescriptors;
+	private Map<String, GlobalDescriptor<T, DefaultVectorSignature>> globalDescriptors;
 
 	/** The region factories. */
 	private Map<String, SupportRegionFactory> regionFactories;
 
 	/** The local descriptors. */
-	private Map<String, LocalDescriptor<T, VectorSignature, Pixel>> localDescriptors;
+	private Map<String, LocalDescriptor<T, DefaultVectorSignature, Pixel>> localDescriptors;
 
 	/** The factory for local descriptor. */
 	private Map<String, String> factoryForLocalDescriptor;
 
 	/** The entry descriptors. */
-	private Map<String, GlobalDescriptor<ImageEntry<T>, VectorSignature>> entryDescriptors;
+	private Map<String, GlobalDescriptor<ImageEntry<T>, DefaultVectorSignature>> entryDescriptors;
 	/** The load images. */
 	private boolean loadImages;
 	private boolean doPartialDump;
@@ -253,11 +253,11 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 		super();
 		this.db = db;
 		this.loadImages = true;
-		this.globalDescriptors = new HashMap<String, GlobalDescriptor<T, VectorSignature>>();
+		this.globalDescriptors = new HashMap<String, GlobalDescriptor<T, DefaultVectorSignature>>();
 		this.regionFactories = new HashMap<String, SupportRegionFactory>();
-		this.localDescriptors = new HashMap<String, LocalDescriptor<T, VectorSignature, Pixel>>();
+		this.localDescriptors = new HashMap<String, LocalDescriptor<T, DefaultVectorSignature, Pixel>>();
 		this.factoryForLocalDescriptor = new HashMap<String, String>();
-		this.entryDescriptors = new HashMap<String, GlobalDescriptor<ImageEntry<T>, VectorSignature>>();
+		this.entryDescriptors = new HashMap<String, GlobalDescriptor<ImageEntry<T>, DefaultVectorSignature>>();
 
 		setImageLoader(imageLoader);
 		setDoPartialDump(false);
@@ -276,7 +276,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 	 * @param desc
 	 *            the desc
 	 */
-	public ImageDatabaseIndexer(ImageDatabase<T> db, ImageLoader<T> imageLoader, String name, GlobalDescriptor<T, VectorSignature> desc) {
+	public ImageDatabaseIndexer(ImageDatabase<T> db, ImageLoader<T> imageLoader, String name, GlobalDescriptor<T, DefaultVectorSignature> desc) {
 		this(db, imageLoader);
 		addGlobalDescriptor(name, desc);
 	}
@@ -289,7 +289,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 	 * @param desc
 	 *            the desc
 	 */
-	public void addEntryDescriptor(String name, GlobalDescriptor<ImageEntry<T>, VectorSignature> desc) {
+	public void addEntryDescriptor(String name, GlobalDescriptor<ImageEntry<T>, DefaultVectorSignature> desc) {
 		entryDescriptors.put(name, desc);
 	}
 
@@ -301,7 +301,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 	 * @param desc
 	 *            the desc
 	 */
-	public void addGlobalDescriptor(String name, GlobalDescriptor<T, VectorSignature> desc) {
+	public void addGlobalDescriptor(String name, GlobalDescriptor<T, DefaultVectorSignature> desc) {
 		globalDescriptors.put(name, desc);
 	}
 
@@ -315,7 +315,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 	 * @param desc
 	 *            the desc
 	 */
-	public void addLocalDescriptor(String name, String rf, LocalDescriptor<T, VectorSignature, Pixel> desc) {
+	public void addLocalDescriptor(String name, String rf, LocalDescriptor<T, DefaultVectorSignature, Pixel> desc) {
 		factoryForLocalDescriptor.put(name, rf);
 		localDescriptors.put(name, desc);
 	}
@@ -359,21 +359,21 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 
 		loadImages = !regionFactories.isEmpty();
 		if (!loadImages) {
-			for (LocalDescriptor<T, VectorSignature, Pixel> ld : localDescriptors.values()) {
+			for (LocalDescriptor<T, DefaultVectorSignature, Pixel> ld : localDescriptors.values()) {
 				if (ld.needToLoadSegmentable()) {
 					loadImages = true;
 					break;
 				}
 			}
 			if (!loadImages) {
-				for (GlobalDescriptor<T, VectorSignature> gd : globalDescriptors.values()) {
+				for (GlobalDescriptor<T, DefaultVectorSignature> gd : globalDescriptors.values()) {
 					if (gd.needToLoadSegmentable()) {
 						loadImages = true;
 						break;
 					}
 				}
 				if (!loadImages) {
-					for (GlobalDescriptor<ImageEntry<T>, VectorSignature> bd : entryDescriptors.values()) {
+					for (GlobalDescriptor<ImageEntry<T>, DefaultVectorSignature> bd : entryDescriptors.values()) {
 						if (bd.needToLoadSegmentable()) {
 							loadImages = true;
 							break;
@@ -384,13 +384,13 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 		}
 
 		try {
-			for (LocalDescriptor<T, VectorSignature, Pixel> d : localDescriptors.values()) {
+			for (LocalDescriptor<T, DefaultVectorSignature, Pixel> d : localDescriptors.values()) {
 				d.initForDatabase(db);
 			}
-			for (GlobalDescriptor<T, VectorSignature> d : globalDescriptors.values()) {
+			for (GlobalDescriptor<T, DefaultVectorSignature> d : globalDescriptors.values()) {
 				d.initForDatabase(db);
 			}
-			for (GlobalDescriptor<ImageEntry<T>, VectorSignature> d : entryDescriptors.values()) {
+			for (GlobalDescriptor<ImageEntry<T>, DefaultVectorSignature> d : entryDescriptors.values()) {
 				d.initForDatabase(db);
 			}
 		} catch (SignatureException e1) {

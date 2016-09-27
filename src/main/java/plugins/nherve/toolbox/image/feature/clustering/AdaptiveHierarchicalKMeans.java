@@ -26,7 +26,7 @@ import java.util.Map;
 import plugins.nherve.toolbox.image.feature.DefaultClusteringAlgorithmImpl;
 import plugins.nherve.toolbox.image.feature.Distance;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 
 /**
@@ -34,7 +34,7 @@ import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
  * 
  * @author Nicolas HERVE - nicolas.herve@pasteur.fr
  */
-public class AdaptiveHierarchicalKMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> implements Distance<VectorSignature> {
+public class AdaptiveHierarchicalKMeans extends DefaultClusteringAlgorithmImpl<DefaultVectorSignature> implements Distance<DefaultVectorSignature> {
 	
 	/** The sub display enabled. */
 	private boolean subDisplayEnabled;
@@ -79,18 +79,18 @@ public class AdaptiveHierarchicalKMeans extends DefaultClusteringAlgorithmImpl<V
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#compute(java.util.List)
 	 */
 	@Override
-	public void compute(List<VectorSignature> points) throws ClusteringException {
-		Map<VectorSignature, List<VectorSignature>> data = new HashMap<VectorSignature, List<VectorSignature>>();
+	public void compute(List<DefaultVectorSignature> points) throws ClusteringException {
+		Map<DefaultVectorSignature, List<DefaultVectorSignature>> data = new HashMap<DefaultVectorSignature, List<DefaultVectorSignature>>();
 		data.put(null, points);
 
-		List<VectorSignature> unableTocluster = new ArrayList<VectorSignature>();
+		List<DefaultVectorSignature> unableTocluster = new ArrayList<DefaultVectorSignature>();
 
 		int iter = 0;
-		List<VectorSignature> current = null;
+		List<DefaultVectorSignature> current = null;
 		while (data.size() + unableTocluster.size() < finalNbCluster) {
-			VectorSignature biggest = null;
+			DefaultVectorSignature biggest = null;
 			int biggestSize = 0;
-			for (VectorSignature c : data.keySet()) {
+			for (DefaultVectorSignature c : data.keySet()) {
 				if (data.get(c).size() > biggestSize) {
 					biggestSize = data.get(c).size();
 					biggest = c;
@@ -108,13 +108,13 @@ public class AdaptiveHierarchicalKMeans extends DefaultClusteringAlgorithmImpl<V
 				kmeans.compute(current);
 
 				int[] aff = kmeans.getAffectations();
-				List<VectorSignature> ct = kmeans.getCentroids();
-				ArrayList<ArrayList<VectorSignature>> ppc = new ArrayList<ArrayList<VectorSignature>>();
+				List<DefaultVectorSignature> ct = kmeans.getCentroids();
+				ArrayList<ArrayList<DefaultVectorSignature>> ppc = new ArrayList<ArrayList<DefaultVectorSignature>>();
 				for (int i = 0; i < ct.size(); i++) {
-					ppc.add(new ArrayList<VectorSignature>());
+					ppc.add(new ArrayList<DefaultVectorSignature>());
 				}
 				int a = 0;
-				for (VectorSignature vs : current) {
+				for (DefaultVectorSignature vs : current) {
 					ppc.get(aff[a]).add(vs);
 					a++;
 				}
@@ -133,10 +133,10 @@ public class AdaptiveHierarchicalKMeans extends DefaultClusteringAlgorithmImpl<V
 		kmeans = new KMeans(data.size(), 0, 0);
 		kmeans.setLogEnabled(isLogEnabled());
 		kmeans.setInitialCentroidsType(KMeans.PROVIDED_INTITAL_CENTROIDS);
-		for (VectorSignature ct : data.keySet()) {
+		for (DefaultVectorSignature ct : data.keySet()) {
 			kmeans.addInitialCentroid(ct, false);
 		}
-		for (VectorSignature ct : unableTocluster) {
+		for (DefaultVectorSignature ct : unableTocluster) {
 			kmeans.addInitialCentroid(ct, false);
 		}
 		kmeans.compute(points);
@@ -146,7 +146,7 @@ public class AdaptiveHierarchicalKMeans extends DefaultClusteringAlgorithmImpl<V
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#getAffectations(java.util.List)
 	 */
 	@Override
-	public int[] getAffectations(List<VectorSignature> points) throws ClusteringException {
+	public int[] getAffectations(List<DefaultVectorSignature> points) throws ClusteringException {
 		return kmeans.getAffectations(points);
 	}
 
@@ -154,7 +154,7 @@ public class AdaptiveHierarchicalKMeans extends DefaultClusteringAlgorithmImpl<V
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#getCentroids()
 	 */
 	@Override
-	public List<VectorSignature> getCentroids() throws ClusteringException {
+	public List<DefaultVectorSignature> getCentroids() throws ClusteringException {
 		return kmeans.getCentroids();
 	}
 
@@ -170,7 +170,7 @@ public class AdaptiveHierarchicalKMeans extends DefaultClusteringAlgorithmImpl<V
 	 * @see plugins.nherve.toolbox.image.feature.Distance#computeDistance(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public double computeDistance(VectorSignature s1, VectorSignature s2) throws SignatureException {
+	public double computeDistance(DefaultVectorSignature s1, DefaultVectorSignature s2) throws SignatureException {
 		return kmeans.computeDistance(s1, s2);
 	}
 

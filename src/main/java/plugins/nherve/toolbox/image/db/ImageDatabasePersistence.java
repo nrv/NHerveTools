@@ -32,7 +32,7 @@ import plugins.nherve.toolbox.Algorithm;
 import plugins.nherve.toolbox.PersistenceToolbox;
 import plugins.nherve.toolbox.image.feature.SegmentableImage;
 import plugins.nherve.toolbox.image.feature.signature.BagOfSignatures;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 /**
  * The Class ImageDatabasePersistence.
@@ -177,13 +177,13 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 			for (ImageEntry<T> e : db.getEntries()) {
 				PersistenceToolbox.dumpInt(fc, e.getId());
 				if (global) {
-					VectorSignature vs = e.getGlobalSignatures().get(desc);
+					DefaultVectorSignature vs = e.getGlobalSignatures().get(desc);
 					if (vs != null) {
 						count++;
 					}
 					PersistenceToolbox.dumpSignature(fc, vs);
 				} else {
-					BagOfSignatures<VectorSignature> bs = e.getLocalSignatures().get(desc);
+					BagOfSignatures<DefaultVectorSignature> bs = e.getLocalSignatures().get(desc);
 					if (bs != null) {
 						count++;
 					}
@@ -389,12 +389,12 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 						throw new IOException("Wrong id of entry for " + desc + " (" + id + "/" + e.getId() + ")");
 					}
 					if (global) {
-						VectorSignature vs = PersistenceToolbox.loadVectorSignature(fc);
+						DefaultVectorSignature vs = PersistenceToolbox.loadVectorSignature(fc);
 						if (vs != null) {
 							e.putSignature(desc, vs);
 						}
 					} else {
-						BagOfSignatures<VectorSignature> bs = PersistenceToolbox.loadBagOfSignatures(fc);
+						BagOfSignatures<DefaultVectorSignature> bs = PersistenceToolbox.loadBagOfSignatures(fc);
 						if (bs != null) {
 							e.putSignature(desc, bs);
 						}

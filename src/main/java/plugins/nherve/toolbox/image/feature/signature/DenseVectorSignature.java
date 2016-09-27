@@ -27,7 +27,7 @@ import java.util.Iterator;
  * 
  * @author Nicolas HERVE - nherve@ina.fr
  */
-public class DenseVectorSignature extends VectorSignature {
+public class DenseVectorSignature extends DefaultVectorSignature {
 	
 	/**
 	 * The Class DVSIterator.
@@ -166,7 +166,7 @@ public class DenseVectorSignature extends VectorSignature {
 	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#concat(plugins.nherve.toolbox.image.feature.signature.VectorSignature)
 	 */
 	@Override
-	public void concat(VectorSignature other) throws SignatureException {
+	public void concat(DefaultVectorSignature other) throws SignatureException {
 		int newSize = data.length + other.getSize();
 		double[] newData = new double[newSize];
 		

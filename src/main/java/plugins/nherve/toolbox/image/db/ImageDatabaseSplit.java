@@ -29,7 +29,7 @@ import plugins.nherve.toolbox.image.feature.SegmentableImage;
 import plugins.nherve.toolbox.image.feature.learning.ClassifierException;
 import plugins.nherve.toolbox.image.feature.learning.LearningAlgorithm;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 
 /**
@@ -239,7 +239,7 @@ public class ImageDatabaseSplit<T extends SegmentableImage> extends Algorithm {
 	 * @throws FeatureException
 	 *             the feature exception
 	 */
-	private List<VectorSignature> getGlobalSignatures(ImageDatabase<T> tdb, String descs) throws FeatureException {
+	private List<DefaultVectorSignature> getGlobalSignatures(ImageDatabase<T> tdb, String descs) throws FeatureException {
 		return getGlobalSignatures(tdb, tdb.getEntries(), descs);
 	}
 
@@ -256,8 +256,8 @@ public class ImageDatabaseSplit<T extends SegmentableImage> extends Algorithm {
 	 * @throws FeatureException
 	 *             the feature exception
 	 */
-	private List<VectorSignature> getGlobalSignatures(ImageDatabase<T> tdb, List<ImageEntry<T>> entries, String descs) throws FeatureException {
-		List<VectorSignature> res = tdb.getGlobalSignatures(entries, descs);
+	private List<DefaultVectorSignature> getGlobalSignatures(ImageDatabase<T> tdb, List<ImageEntry<T>> entries, String descs) throws FeatureException {
+		List<DefaultVectorSignature> res = tdb.getGlobalSignatures(entries, descs);
 
 		if (sigSize < 0) {
 			sigSize = res.get(0).getSize();
@@ -282,7 +282,7 @@ public class ImageDatabaseSplit<T extends SegmentableImage> extends Algorithm {
 	 * @throws FeatureException
 	 *             the feature exception
 	 */
-	private List<VectorSignature> getGlobalSignatures(ImageDatabase<T> tdb, String cls, boolean pos, String descs) throws FeatureException {
+	private List<DefaultVectorSignature> getGlobalSignatures(ImageDatabase<T> tdb, String cls, boolean pos, String descs) throws FeatureException {
 		List<ImageEntry<T>> entries = tdb.getEntries(cls, pos);
 
 		return getGlobalSignatures(tdb, entries, descs);
@@ -301,7 +301,7 @@ public class ImageDatabaseSplit<T extends SegmentableImage> extends Algorithm {
 	 * @throws FeatureException
 	 *             the feature exception
 	 */
-	public List<VectorSignature> getLrnSignatures(String cls, boolean pos, String desc) throws FeatureException {
+	public List<DefaultVectorSignature> getLrnSignatures(String cls, boolean pos, String desc) throws FeatureException {
 		return getGlobalSignatures(lrnEntries, cls, pos, desc);
 	}
 
@@ -344,10 +344,10 @@ public class ImageDatabaseSplit<T extends SegmentableImage> extends Algorithm {
 	 */
 	public double signatureUsedSize(String desc) throws SignatureException, FeatureException {
 		double totalNonZero = 0;
-		for (VectorSignature s : getGlobalSignatures(lrnEntries, desc)) {
+		for (DefaultVectorSignature s : getGlobalSignatures(lrnEntries, desc)) {
 			totalNonZero += s.getNonZeroBins();
 		}
-		for (VectorSignature s : getGlobalSignatures(tstEntries, desc)) {
+		for (DefaultVectorSignature s : getGlobalSignatures(tstEntries, desc)) {
 			totalNonZero += s.getNonZeroBins();
 		}
 		double avgNonZero = totalNonZero / (lrnSize() + tstSize());
@@ -368,7 +368,7 @@ public class ImageDatabaseSplit<T extends SegmentableImage> extends Algorithm {
 	 *             the classifier exception
 	 */
 	public Prediction predict(LearningAlgorithm model, String desc) throws FeatureException, ClassifierException {
-		List<VectorSignature> sigs = getGlobalSignatures(tstEntries, desc);
+		List<DefaultVectorSignature> sigs = getGlobalSignatures(tstEntries, desc);
 
 		Prediction pred = new Prediction(model.getModelInfo());
 		pred.setLogEnabled(model.isLogEnabled());

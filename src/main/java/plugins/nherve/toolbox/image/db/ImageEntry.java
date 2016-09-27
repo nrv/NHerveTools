@@ -27,7 +27,7 @@ import plugins.nherve.toolbox.image.ImageLoader;
 import plugins.nherve.toolbox.image.feature.Segmentable;
 import plugins.nherve.toolbox.image.feature.SegmentableImage;
 import plugins.nherve.toolbox.image.feature.signature.BagOfSignatures;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 /**
  * The Class ImageEntry.
@@ -45,7 +45,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 	private String file;
 
 	/** The global signatures. */
-	private Map<String, VectorSignature> globalSignatures;
+	private Map<String, DefaultVectorSignature> globalSignatures;
 
 	/** The height. */
 	private transient int height;
@@ -57,7 +57,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 	private transient T image;
 
 	/** The local signatures. */
-	private Map<String, BagOfSignatures<VectorSignature>> localSignatures;
+	private Map<String, BagOfSignatures<DefaultVectorSignature>> localSignatures;
 
 	/** The width. */
 	private transient int width;
@@ -69,8 +69,8 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 		super();
 
 		classes = new HashMap<String, Double>();
-		globalSignatures = new HashMap<String, VectorSignature>();
-		localSignatures = new HashMap<String, BagOfSignatures<VectorSignature>>();
+		globalSignatures = new HashMap<String, DefaultVectorSignature>();
+		localSignatures = new HashMap<String, BagOfSignatures<DefaultVectorSignature>>();
 
 		width = 0;
 		height = 0;
@@ -146,7 +146,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 	 * 
 	 * @return the global signatures
 	 */
-	public Map<String, VectorSignature> getGlobalSignatures() {
+	public Map<String, DefaultVectorSignature> getGlobalSignatures() {
 		return globalSignatures;
 	}
 
@@ -183,7 +183,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 	 * 
 	 * @return the local signatures
 	 */
-	public Map<String, BagOfSignatures<VectorSignature>> getLocalSignatures() {
+	public Map<String, BagOfSignatures<DefaultVectorSignature>> getLocalSignatures() {
 		return localSignatures;
 	}
 
@@ -239,7 +239,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 	 * @param value
 	 *            the value
 	 */
-	public void putSignature(String key, BagOfSignatures<VectorSignature> value) {
+	public void putSignature(String key, BagOfSignatures<DefaultVectorSignature> value) {
 		synchronized (localSignatures) {
 			localSignatures.put(key, value);
 		}
@@ -253,7 +253,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 	 * @param value
 	 *            the value
 	 */
-	public void putSignature(String key, VectorSignature value) {
+	public void putSignature(String key, DefaultVectorSignature value) {
 		synchronized (globalSignatures) {
 			globalSignatures.put(key, value);
 		}
@@ -326,7 +326,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 	 * @param globalSignatures
 	 *            the global signatures
 	 */
-	public void setGlobalSignatures(Map<String, VectorSignature> globalSignatures) {
+	public void setGlobalSignatures(Map<String, DefaultVectorSignature> globalSignatures) {
 		this.globalSignatures = globalSignatures;
 	}
 
@@ -356,7 +356,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 	 * @param localSignatures
 	 *            the local signatures
 	 */
-	public void setLocalSignatures(Map<String, BagOfSignatures<VectorSignature>> localSignatures) {
+	public void setLocalSignatures(Map<String, BagOfSignatures<DefaultVectorSignature>> localSignatures) {
 		this.localSignatures = localSignatures;
 	}
 

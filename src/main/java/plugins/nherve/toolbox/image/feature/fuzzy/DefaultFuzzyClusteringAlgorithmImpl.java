@@ -23,7 +23,7 @@ import java.util.List;
 
 import plugins.nherve.toolbox.image.feature.DefaultClusteringAlgorithmImpl;
 import plugins.nherve.toolbox.image.feature.clustering.ClusteringException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 
 /**
@@ -31,7 +31,7 @@ import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
  * 
  * @author Nicolas HERVE - nicolas.herve@pasteur.fr
  */
-public abstract class DefaultFuzzyClusteringAlgorithmImpl extends DefaultClusteringAlgorithmImpl<VectorSignature> implements FuzzyClusteringAlgorithm {
+public abstract class DefaultFuzzyClusteringAlgorithmImpl extends DefaultClusteringAlgorithmImpl<DefaultVectorSignature> implements FuzzyClusteringAlgorithm {
 	
 	/**
 	 * Instantiates a new default fuzzy clustering algorithm impl.
@@ -47,10 +47,10 @@ public abstract class DefaultFuzzyClusteringAlgorithmImpl extends DefaultCluster
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#getAffectations(java.util.List)
 	 */
 	@Override
-	public int[] getAffectations(List<VectorSignature> points) throws ClusteringException {
+	public int[] getAffectations(List<DefaultVectorSignature> points) throws ClusteringException {
 		int[] as = new int[points.size()];
 		int p = 0;
-		for (VectorSignature s : points) {
+		for (DefaultVectorSignature s : points) {
 			as[p] = getAffectation(s);
 			p++;
 		}
@@ -66,7 +66,7 @@ public abstract class DefaultFuzzyClusteringAlgorithmImpl extends DefaultCluster
 	 * @throws ClusteringException
 	 *             the clustering exception
 	 */
-	public int getAffectation(VectorSignature point) throws ClusteringException {
+	public int getAffectation(DefaultVectorSignature point) throws ClusteringException {
 		double[] m = getMemberships(point);
 		int a = 0;
 		double mx = 0;
@@ -83,7 +83,7 @@ public abstract class DefaultFuzzyClusteringAlgorithmImpl extends DefaultCluster
 	 * @see plugins.nherve.toolbox.image.feature.fuzzy.FuzzyClusteringAlgorithm#getMemberships(plugins.nherve.toolbox.image.feature.signature.VectorSignature[], int)
 	 */
 	@Override
-	public double[] getMemberships(VectorSignature[] point, int cluster) throws ClusteringException {
+	public double[] getMemberships(DefaultVectorSignature[] point, int cluster) throws ClusteringException {
 		return getMemberships(Arrays.asList(point), cluster);
 	}
 	
@@ -91,7 +91,7 @@ public abstract class DefaultFuzzyClusteringAlgorithmImpl extends DefaultCluster
 	 * @see plugins.nherve.toolbox.image.feature.fuzzy.FuzzyClusteringAlgorithm#getMemberships(plugins.nherve.toolbox.image.feature.signature.VectorSignature[], int, java.util.List)
 	 */
 	@Override
-	public double[] getMemberships(VectorSignature[] point, int cluster, List<Integer> clustersToConsider) throws ClusteringException {
+	public double[] getMemberships(DefaultVectorSignature[] point, int cluster, List<Integer> clustersToConsider) throws ClusteringException {
 		return getMemberships(Arrays.asList(point), cluster, clustersToConsider);
 	}
 }

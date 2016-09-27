@@ -35,7 +35,7 @@ import java.util.TreeSet;
  *
  * @author Nicolas HERVE - nherve@ina.fr
  */
-public class SparseVectorSignature extends VectorSignature {
+public class SparseVectorSignature extends DefaultVectorSignature {
 
 	/** The size. */
 	private int size;
@@ -99,7 +99,7 @@ public class SparseVectorSignature extends VectorSignature {
 	 * @see plugins.nherve.toolbox.image.feature.signature.VectorSignature#concat (plugins.nherve.toolbox.image.feature.signature.VectorSignature)
 	 */
 	@Override
-	public void concat(VectorSignature other) throws SignatureException {
+	public void concat(DefaultVectorSignature other) throws SignatureException {
 		int newSize = size + other.getSize();
 		Map<Integer, Double> newData = new TreeMap<Integer, Double>();
 

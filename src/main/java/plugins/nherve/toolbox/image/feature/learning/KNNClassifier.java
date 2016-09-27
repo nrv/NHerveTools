@@ -21,7 +21,7 @@ package plugins.nherve.toolbox.image.feature.learning;
 import plugins.nherve.toolbox.image.feature.SignatureDistance;
 import plugins.nherve.toolbox.image.feature.signature.L2Distance;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 /**
  * The Class KNNClassifier.
@@ -31,10 +31,10 @@ import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 public class KNNClassifier extends LearningAlgorithm {
 	
 	/** The positive. */
-	private VectorSignature[] positive;
+	private DefaultVectorSignature[] positive;
 	
 	/** The negative. */
-	private VectorSignature[] negative;
+	private DefaultVectorSignature[] negative;
 	
 	/** The dist. */
 	private SignatureDistance dist;
@@ -53,19 +53,19 @@ public class KNNClassifier extends LearningAlgorithm {
 	 * @see plugins.nherve.toolbox.image.feature.learning.LearningAlgorithm#isPositiveImpl(plugins.nherve.toolbox.image.feature.signature.VectorSignature)
 	 */
 	@Override
-	protected boolean isPositiveImpl(VectorSignature sig) throws ClassifierException {
+	protected boolean isPositiveImpl(DefaultVectorSignature sig) throws ClassifierException {
 		double minDist = Double.MAX_VALUE;
 		
 		try {
 			double d = 0.0;
-			for (VectorSignature ps : positive) {
+			for (DefaultVectorSignature ps : positive) {
 				d = dist.computeDistance(sig, ps);
 				if (d < minDist) {
 					minDist = d;
 				}
 			}
 			
-			for (VectorSignature ps : negative) {
+			for (DefaultVectorSignature ps : negative) {
 				d = dist.computeDistance(sig, ps);
 				if (d < minDist) {
 					return false;
@@ -83,7 +83,7 @@ public class KNNClassifier extends LearningAlgorithm {
 	 * @see plugins.nherve.toolbox.image.feature.learning.LearningAlgorithm#learnImpl(plugins.nherve.toolbox.image.feature.signature.VectorSignature[], plugins.nherve.toolbox.image.feature.signature.VectorSignature[])
 	 */
 	@Override
-	protected void learnImpl(VectorSignature[] positive, VectorSignature[] negative) throws ClassifierException {
+	protected void learnImpl(DefaultVectorSignature[] positive, DefaultVectorSignature[] negative) throws ClassifierException {
 		this.positive = positive;
 		this.negative = negative;
 	}
@@ -92,7 +92,7 @@ public class KNNClassifier extends LearningAlgorithm {
 	 * @see plugins.nherve.toolbox.image.feature.learning.LearningAlgorithm#scoreImpl(plugins.nherve.toolbox.image.feature.signature.VectorSignature)
 	 */
 	@Override
-	protected double scoreImpl(VectorSignature sig) throws ClassifierException {
+	protected double scoreImpl(DefaultVectorSignature sig) throws ClassifierException {
 		throw new ClassifierException("KNNClassifier.score(VectorSignature sig) not yet implemented");
 	}
 

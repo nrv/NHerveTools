@@ -24,7 +24,7 @@ import java.util.List;
 
 import plugins.nherve.toolbox.Algorithm;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 
 /**
@@ -60,8 +60,8 @@ public abstract class DataProcessor extends Algorithm {
 	 *            the neg
 	 * @return the all sigs
 	 */
-	private List<VectorSignature> getAllSigs(List<VectorSignature> pos, List<VectorSignature> neg) {
-		ArrayList<VectorSignature> all = new ArrayList<VectorSignature>();
+	private List<DefaultVectorSignature> getAllSigs(List<DefaultVectorSignature> pos, List<DefaultVectorSignature> neg) {
+		ArrayList<DefaultVectorSignature> all = new ArrayList<DefaultVectorSignature>();
 		all.addAll(pos);
 		all.addAll(neg);
 		return all;
@@ -77,7 +77,7 @@ public abstract class DataProcessor extends Algorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public void estimateParameters(List<VectorSignature> pos, List<VectorSignature> neg)  throws SignatureException {
+	public void estimateParameters(List<DefaultVectorSignature> pos, List<DefaultVectorSignature> neg)  throws SignatureException {
 		estimateParameters(getAllSigs(pos, neg));
 	}
 	
@@ -91,7 +91,7 @@ public abstract class DataProcessor extends Algorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public void estimateParameters(VectorSignature[] pos, VectorSignature[] neg)  throws SignatureException {
+	public void estimateParameters(DefaultVectorSignature[] pos, DefaultVectorSignature[] neg)  throws SignatureException {
 		estimateParameters(getAllSigs(Arrays.asList(pos), Arrays.asList(neg)));
 	}
 	
@@ -104,10 +104,10 @@ public abstract class DataProcessor extends Algorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public List<VectorSignature> apply(List<VectorSignature> sigs)  throws SignatureException {
-		List<VectorSignature> res = new ArrayList<VectorSignature>();
+	public List<DefaultVectorSignature> apply(List<DefaultVectorSignature> sigs)  throws SignatureException {
+		List<DefaultVectorSignature> res = new ArrayList<DefaultVectorSignature>();
 		
-		for (VectorSignature s : sigs) {
+		for (DefaultVectorSignature s : sigs) {
 			res.add(apply(s));
 		}
 		
@@ -123,8 +123,8 @@ public abstract class DataProcessor extends Algorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public VectorSignature[] apply(VectorSignature[] sigs)  throws SignatureException {
-		VectorSignature[] res = new VectorSignature[sigs.length];
+	public DefaultVectorSignature[] apply(DefaultVectorSignature[] sigs)  throws SignatureException {
+		DefaultVectorSignature[] res = new DefaultVectorSignature[sigs.length];
 		
 		for (int i = 0; i < sigs.length; i++) {
 			res[i] = apply(sigs[i]);
@@ -141,7 +141,7 @@ public abstract class DataProcessor extends Algorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public abstract void estimateParameters(List<VectorSignature> sigs) throws SignatureException;
+	public abstract void estimateParameters(List<DefaultVectorSignature> sigs) throws SignatureException;
 	
 	/**
 	 * Apply.
@@ -152,6 +152,6 @@ public abstract class DataProcessor extends Algorithm {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public abstract VectorSignature apply(VectorSignature sig) throws SignatureException;
+	public abstract DefaultVectorSignature apply(DefaultVectorSignature sig) throws SignatureException;
 	
 }

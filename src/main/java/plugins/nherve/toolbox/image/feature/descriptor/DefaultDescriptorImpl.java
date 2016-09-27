@@ -24,7 +24,7 @@ import plugins.nherve.toolbox.image.feature.Descriptor;
 import plugins.nherve.toolbox.image.feature.Segmentable;
 import plugins.nherve.toolbox.image.feature.Signature;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 /**
  * The Class DefaultDescriptorImpl.
@@ -48,7 +48,7 @@ public abstract class DefaultDescriptorImpl<T extends Segmentable, S extends Sig
 	 */
 	public DefaultDescriptorImpl(boolean display) {
 		super(display);
-		setVectorSignatureType(VectorSignature.DENSE_VECTOR_SIGNATURE);
+		setVectorSignatureType(DefaultVectorSignature.DENSE_VECTOR_SIGNATURE);
 	}
 
 	/**
@@ -89,8 +89,8 @@ public abstract class DefaultDescriptorImpl<T extends Segmentable, S extends Sig
 	 *            the size
 	 * @return the empty signature
 	 */
-	public VectorSignature getEmptySignature(int size) {
-		return VectorSignature.getEmptySignature(vectorSignatureType, size);
+	public DefaultVectorSignature getEmptySignature(int size) {
+		return DefaultVectorSignature.getEmptySignature(vectorSignatureType, size);
 	}
 	
 	/**
@@ -98,7 +98,7 @@ public abstract class DefaultDescriptorImpl<T extends Segmentable, S extends Sig
 	 * 
 	 * @return the empty signature
 	 */
-	public VectorSignature getEmptySignature() {
+	public DefaultVectorSignature getEmptySignature() {
 		return getEmptySignature(getSignatureSize());
 	}
 

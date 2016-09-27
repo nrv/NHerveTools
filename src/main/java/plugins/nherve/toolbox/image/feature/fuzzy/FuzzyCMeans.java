@@ -33,6 +33,7 @@ import plugins.nherve.toolbox.image.feature.clustering.ClusteringException;
 import plugins.nherve.toolbox.image.feature.signature.DenseVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.L2Distance;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 
 
@@ -49,7 +50,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	 * 
 	 * @author Nicolas HERVE - nicolas.herve@pasteur.fr
 	 */
-	public class ComputeMembershipWorker extends MultipleDataTask<VectorSignature, Integer> {
+	public class ComputeMembershipWorker extends MultipleDataTask<DefaultVectorSignature, Integer> {
 		
 		/**
 		 * Instantiates a new compute membership worker.
@@ -61,7 +62,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 		 * @param idx2
 		 *            the idx2
 		 */
-		public ComputeMembershipWorker(List<VectorSignature> allData, int idx1, int idx2) {
+		public ComputeMembershipWorker(List<DefaultVectorSignature> allData, int idx1, int idx2) {
 			super(allData, idx1, idx2);
 		}
 
@@ -69,11 +70,11 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 		 * @see plugins.nherve.toolbox.concurrent.MultipleDataTask#call(java.lang.Object, int)
 		 */
 		@Override
-		public void call(VectorSignature vs, int idx) throws Exception {
+		public void call(DefaultVectorSignature vs, int idx) throws Exception {
 			double nexp = 2d / (fuzzyfier - 1);
 			double[] dst = new double[nbClasses];
 			int c = 0;
-			for (VectorSignature s : centroids) {
+			for (DefaultVectorSignature s : centroids) {
 				dst[c] = distance(vs, s);
 				c++;
 			}
@@ -116,7 +117,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	private double stabilizationCriterion;
 	
 	/** The centroids. */
-	private List<VectorSignature> centroids;
+	private List<DefaultVectorSignature> centroids;
 	
 	/** The nb points. */
 	private int nbPoints;
@@ -190,7 +191,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	private double computeStabilizationCriterion(final List<VectorSignature> oldCentroids) throws SignatureException {
+	private double computeStabilizationCriterion(final List<DefaultVectorSignature> oldCentroids) throws SignatureException {
 		if (oldCentroids == null) {
 			return nbClasses * stabilizationCriterion * 100.0;
 		}
@@ -211,7 +212,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	 * @param points
 	 *            the points
 	 */
-	private void computeMemberships(List<VectorSignature> points) {
+	private void computeMemberships(List<DefaultVectorSignature> points) {
 		TaskManager tm = TaskManager.getSecondLevelInstance();
 		try {
 			tm.submitMultiForAll(points, ComputeMembershipWorker.class, this, "FCM", 0);
@@ -226,7 +227,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#compute(java.util.List)
 	 */
 	@Override
-	public void compute(List<VectorSignature> points) throws ClusteringException {
+	public void compute(List<DefaultVectorSignature> points) throws ClusteringException {
 		nbPoints = points.size();
 
 		log("Launching FuzzyCMeans on " + nbPoints + " points to produce " + nbClasses + " classes");
@@ -235,13 +236,13 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 			throw new ClusteringException("nbClasses == " + nbClasses);
 		}
 
-		List<VectorSignature> oldCentroids = null;
+		List<DefaultVectorSignature> oldCentroids = null;
 		memberships = new double[nbPoints][nbClasses];
 
 		if (nbPoints <= nbClasses) {
-			centroids = new ArrayList<VectorSignature>();
+			centroids = new ArrayList<DefaultVectorSignature>();
 			try {
-				for (VectorSignature s : points) {
+				for (DefaultVectorSignature s : points) {
 					centroids.add(s.clone());
 				}
 				computeMemberships(points);
@@ -311,9 +312,9 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	private List<VectorSignature> computeCentroids(final List<VectorSignature> points) throws SignatureException {
+	private List<DefaultVectorSignature> computeCentroids(final List<DefaultVectorSignature> points) throws SignatureException {
 		int dim = points.get(0).getSize();
-		centroids = new ArrayList<VectorSignature>();
+		centroids = new ArrayList<DefaultVectorSignature>();
 		for (int c = 0; c < nbClasses; c++) {
 			centroids.add(new DenseVectorSignature(dim));
 		}
@@ -322,9 +323,9 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 		Arrays.fill(nrm, 0);
 
 		int p = 0;
-		for (VectorSignature vs : points) {
+		for (DefaultVectorSignature vs : points) {
 			for (int c = 0; c < nbClasses; c++) {
-				VectorSignature cs = centroids.get(c);
+				DefaultVectorSignature cs = centroids.get(c);
 				double m = Math.pow(memberships[p][c], fuzzyfier);
 				nrm[c] += m;
 				for (int d = 0; d < dim; d++) {
@@ -335,7 +336,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 		}
 
 		int c = 0;
-		for (VectorSignature cs : centroids) {
+		for (DefaultVectorSignature cs : centroids) {
 			cs.multiply(1.0 / nrm[c]);
 			c++;
 		}
@@ -354,7 +355,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	private double distance(VectorSignature s1, VectorSignature s2) throws SignatureException {
+	private double distance(DefaultVectorSignature s1, DefaultVectorSignature s2) throws SignatureException {
 		return distance.computeDistance(s1, s2);
 	}
 
@@ -362,7 +363,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#getCentroids()
 	 */
 	@Override
-	public List<VectorSignature> getCentroids() throws ClusteringException {
+	public List<DefaultVectorSignature> getCentroids() throws ClusteringException {
 		return centroids;
 	}
 
@@ -370,13 +371,13 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	 * @see plugins.nherve.toolbox.image.feature.fuzzy.FuzzyClusteringAlgorithm#getMemberships(plugins.nherve.toolbox.image.feature.signature.VectorSignature)
 	 */
 	@Override
-	public double[] getMemberships(VectorSignature point) throws ClusteringException {
+	public double[] getMemberships(DefaultVectorSignature point) throws ClusteringException {
 		try {
 			double nexp = 2d / (fuzzyfier - 1);
 			double[] dst = new double[nbClasses];
 			double[] m = new double[nbClasses];
 			int c = 0;
-			for (VectorSignature s : centroids) {
+			for (DefaultVectorSignature s : centroids) {
 				dst[c] = distance(point, s);
 				c++;
 			}
@@ -418,10 +419,10 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	 * @see plugins.nherve.toolbox.image.feature.fuzzy.FuzzyClusteringAlgorithm#getMemberships(java.util.List, int)
 	 */
 	@Override
-	public double[] getMemberships(List<VectorSignature> points, int cluster) throws ClusteringException {
+	public double[] getMemberships(List<DefaultVectorSignature> points, int cluster) throws ClusteringException {
 		double[] m = new double[points.size()];
 		int pi = 0;
-		for (VectorSignature p : points) {
+		for (DefaultVectorSignature p : points) {
 			double[] tm = getMemberships(p);
 			m[pi] = tm[cluster];
 			pi++;
@@ -433,7 +434,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	 * @see plugins.nherve.toolbox.image.feature.fuzzy.FuzzyClusteringAlgorithm#getMemberships(java.util.List, int, java.util.List)
 	 */
 	@Override
-	public double[] getMemberships(List<VectorSignature> points, int cluster, List<Integer> clustersToConsider) throws ClusteringException {
+	public double[] getMemberships(List<DefaultVectorSignature> points, int cluster, List<Integer> clustersToConsider) throws ClusteringException {
 		throw new ClusteringException("Not yet implemented");
 	}
 	
@@ -441,7 +442,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	 * @see plugins.nherve.toolbox.image.feature.fuzzy.FuzzyClusteringAlgorithm#getMemberships(plugins.nherve.toolbox.image.feature.signature.VectorSignature, java.util.List)
 	 */
 	@Override
-	public double[] getMemberships(VectorSignature point, List<Integer> clustersToConsider) throws ClusteringException {
+	public double[] getMemberships(DefaultVectorSignature point, List<Integer> clustersToConsider) throws ClusteringException {
 		throw new ClusteringException("Not yet implemented");
 	}
 }

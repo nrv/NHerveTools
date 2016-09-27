@@ -22,7 +22,7 @@ import java.util.List;
 
 import plugins.nherve.toolbox.image.feature.ClusteringAlgorithm;
 import plugins.nherve.toolbox.image.feature.clustering.ClusteringException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 
 /**
@@ -43,7 +43,7 @@ public abstract class PseudoFuzzyClusteringAlgorithmImpl extends DefaultFuzzyClu
 	}
 
 	/** The internal algorithm. */
-	protected ClusteringAlgorithm<VectorSignature> internalAlgorithm;
+	protected ClusteringAlgorithm<DefaultVectorSignature> internalAlgorithm;
 
 	/**
 	 * Sets the internal algorithm.
@@ -51,7 +51,7 @@ public abstract class PseudoFuzzyClusteringAlgorithmImpl extends DefaultFuzzyClu
 	 * @param internalAlgorithm
 	 *            the new internal algorithm
 	 */
-	protected void setInternalAlgorithm(ClusteringAlgorithm<VectorSignature> internalAlgorithm) {
+	protected void setInternalAlgorithm(ClusteringAlgorithm<DefaultVectorSignature> internalAlgorithm) {
 		this.internalAlgorithm = internalAlgorithm;
 	}
 
@@ -59,7 +59,7 @@ public abstract class PseudoFuzzyClusteringAlgorithmImpl extends DefaultFuzzyClu
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#compute(java.util.List)
 	 */
 	@Override
-	public void compute(List<VectorSignature> points) throws ClusteringException {
+	public void compute(List<DefaultVectorSignature> points) throws ClusteringException {
 		internalAlgorithm.compute(points);
 	}
 
@@ -67,7 +67,7 @@ public abstract class PseudoFuzzyClusteringAlgorithmImpl extends DefaultFuzzyClu
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#getCentroids()
 	 */
 	@Override
-	public List<VectorSignature> getCentroids() throws ClusteringException {
+	public List<DefaultVectorSignature> getCentroids() throws ClusteringException {
 		return internalAlgorithm.getCentroids();
 	}
 

@@ -25,7 +25,7 @@ import plugins.nherve.toolbox.image.db.ImageDatabaseSplit;
 import plugins.nherve.toolbox.image.feature.FeatureException;
 import plugins.nherve.toolbox.image.feature.SegmentableImage;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 
 /**
@@ -54,7 +54,7 @@ public abstract class LearningAlgorithm extends Algorithm {
 	 * @throws ClassifierException
 	 *             the classifier exception
 	 */
-	protected abstract void learnImpl(VectorSignature[] positive, VectorSignature[] negative) throws ClassifierException;
+	protected abstract void learnImpl(DefaultVectorSignature[] positive, DefaultVectorSignature[] negative) throws ClassifierException;
 
 	/**
 	 * Checks if is positive impl.
@@ -65,7 +65,7 @@ public abstract class LearningAlgorithm extends Algorithm {
 	 * @throws ClassifierException
 	 *             the classifier exception
 	 */
-	protected abstract boolean isPositiveImpl(VectorSignature sig) throws ClassifierException;
+	protected abstract boolean isPositiveImpl(DefaultVectorSignature sig) throws ClassifierException;
 
 	/**
 	 * Score impl.
@@ -76,7 +76,7 @@ public abstract class LearningAlgorithm extends Algorithm {
 	 * @throws ClassifierException
 	 *             the classifier exception
 	 */
-	protected abstract double scoreImpl(VectorSignature sig) throws ClassifierException;
+	protected abstract double scoreImpl(DefaultVectorSignature sig) throws ClassifierException;
 
 	/**
 	 * Data process.
@@ -89,9 +89,9 @@ public abstract class LearningAlgorithm extends Algorithm {
 	 * @throws ClassifierException
 	 *             the classifier exception
 	 */
-	protected VectorSignature[][] dataProcess(VectorSignature[] positive, VectorSignature[] negative) throws ClassifierException {
+	protected DefaultVectorSignature[][] dataProcess(DefaultVectorSignature[] positive, DefaultVectorSignature[] negative) throws ClassifierException {
 		log("Launching DataProcessor for learn data");
-		VectorSignature[][] data = new VectorSignature[2][];
+		DefaultVectorSignature[][] data = new DefaultVectorSignature[2][];
 		
 		try {
 			dataProcessor.estimateParameters(positive, negative);
@@ -115,12 +115,12 @@ public abstract class LearningAlgorithm extends Algorithm {
 	 * @throws ClassifierException
 	 *             the classifier exception
 	 */
-	public void learn(VectorSignature[] positive, VectorSignature[] negative) throws ClassifierException {
-		VectorSignature[] pa = positive;
-		VectorSignature[] na = negative;
+	public void learn(DefaultVectorSignature[] positive, DefaultVectorSignature[] negative) throws ClassifierException {
+		DefaultVectorSignature[] pa = positive;
+		DefaultVectorSignature[] na = negative;
 
 		if (hasDataProcessor() && (!isLearnDataProcessed())) {
-			VectorSignature[][] data = dataProcess(positive, negative);
+			DefaultVectorSignature[][] data = dataProcess(positive, negative);
 			pa = data[0];
 			na = data[1];
 		}
@@ -137,7 +137,7 @@ public abstract class LearningAlgorithm extends Algorithm {
 	 * @throws ClassifierException
 	 *             the classifier exception
 	 */
-	public boolean isPositive(VectorSignature sig) throws ClassifierException {
+	public boolean isPositive(DefaultVectorSignature sig) throws ClassifierException {
 		if (hasDataProcessor()) {
 			try {
 				return isPositiveImpl(dataProcessor.apply(sig));
@@ -158,7 +158,7 @@ public abstract class LearningAlgorithm extends Algorithm {
 	 * @throws ClassifierException
 	 *             the classifier exception
 	 */
-	public double score(VectorSignature sig) throws ClassifierException {
+	public double score(DefaultVectorSignature sig) throws ClassifierException {
 		if (hasDataProcessor()) {
 			try {
 				return scoreImpl(dataProcessor.apply(sig));
@@ -180,9 +180,9 @@ public abstract class LearningAlgorithm extends Algorithm {
 	 * @throws ClassifierException
 	 *             the classifier exception
 	 */
-	public void learn(List<VectorSignature> positive, List<VectorSignature> negative) throws ClassifierException {
-		VectorSignature[] p = (VectorSignature[]) positive.toArray(new VectorSignature[positive.size()]);
-		VectorSignature[] n = (VectorSignature[]) negative.toArray(new VectorSignature[negative.size()]);
+	public void learn(List<DefaultVectorSignature> positive, List<DefaultVectorSignature> negative) throws ClassifierException {
+		DefaultVectorSignature[] p = (DefaultVectorSignature[]) positive.toArray(new DefaultVectorSignature[positive.size()]);
+		DefaultVectorSignature[] n = (DefaultVectorSignature[]) negative.toArray(new DefaultVectorSignature[negative.size()]);
 		learn(p, n);
 	}
 
@@ -201,8 +201,8 @@ public abstract class LearningAlgorithm extends Algorithm {
 	public <T extends SegmentableImage> void learn(ImageDatabaseSplit<T> split, String posClass, String desc) throws ClassifierException {
 		try {
 			setModelInfo(posClass);
-			List<VectorSignature> pos = split.getLrnSignatures(posClass, true, desc);
-			List<VectorSignature> neg = split.getLrnSignatures(posClass, false, desc);
+			List<DefaultVectorSignature> pos = split.getLrnSignatures(posClass, true, desc);
+			List<DefaultVectorSignature> neg = split.getLrnSignatures(posClass, false, desc);
 			learn(pos, neg);
 		} catch (FeatureException e) {
 			throw new ClassifierException(e);

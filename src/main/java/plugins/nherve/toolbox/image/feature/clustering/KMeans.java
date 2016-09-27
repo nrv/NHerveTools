@@ -32,6 +32,7 @@ import plugins.nherve.toolbox.image.feature.SignatureDistance;
 import plugins.nherve.toolbox.image.feature.signature.DenseVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.L2Distance;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 
 
@@ -40,14 +41,14 @@ import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
  * 
  * @author Nicolas HERVE - nicolas.herve@pasteur.fr
  */
-public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> implements Distance<VectorSignature> {
+public class KMeans extends DefaultClusteringAlgorithmImpl<DefaultVectorSignature> implements Distance<DefaultVectorSignature> {
 	
 	/**
 	 * The Class ComputeAffectationWorker.
 	 * 
 	 * @author Nicolas HERVE - nicolas.herve@pasteur.fr
 	 */
-	public class ComputeAffectationWorker extends MultipleDataTask<VectorSignature, Integer> {
+	public class ComputeAffectationWorker extends MultipleDataTask<DefaultVectorSignature, Integer> {
 		
 		/**
 		 * Instantiates a new compute affectation worker.
@@ -59,7 +60,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 		 * @param idx2
 		 *            the idx2
 		 */
-		public ComputeAffectationWorker(List<VectorSignature> allData, int idx1, int idx2) {
+		public ComputeAffectationWorker(List<DefaultVectorSignature> allData, int idx1, int idx2) {
 			super(allData, idx1, idx2);
 		}
 
@@ -67,11 +68,11 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 		 * @see plugins.nherve.toolbox.concurrent.MultipleDataTask#call(java.lang.Object, int)
 		 */
 		@Override
-		public void call(VectorSignature data, int idx) throws SignatureException {
+		public void call(DefaultVectorSignature data, int idx) throws SignatureException {
 			double minDist = Double.MAX_VALUE;
 			int closestCentroid = 0;
 			int c = 0;
-			for (VectorSignature s : centroids) {
+			for (DefaultVectorSignature s : centroids) {
 				double d = computeDistance(data, s);
 				if (d < minDist) {
 					minDist = d;
@@ -121,10 +122,10 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 	private double stabilizationCriterion;
 
 	/** The centroids. */
-	private List<VectorSignature> centroids;
+	private List<DefaultVectorSignature> centroids;
 
 	/** The initial centroids. */
-	private List<VectorSignature> initialCentroids;
+	private List<DefaultVectorSignature> initialCentroids;
 	
 	/** The able to move. */
 	private List<Boolean> ableToMove;
@@ -171,7 +172,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 	 * @param move
 	 *            the move
 	 */
-	public void addInitialCentroid(VectorSignature centroid, boolean move) {
+	public void addInitialCentroid(DefaultVectorSignature centroid, boolean move) {
 		initialCentroids.add(centroid);
 		ableToMove.add(move);
 	}
@@ -180,10 +181,10 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#compute(java.util.List)
 	 */
 	@Override
-	public void compute(final List<VectorSignature> points) throws ClusteringException {
+	public void compute(final List<DefaultVectorSignature> points) throws ClusteringException {
 		log("Launching KMeans on " + points.size() + " points to produce " + nbClasses + " classes");
 
-		List<VectorSignature> oldCentroids = null;
+		List<DefaultVectorSignature> oldCentroids = null;
 		affectation = new int[points.size()];
 
 		if (nbClasses < 2) {
@@ -191,9 +192,9 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 		}
 
 		if (points.size() <= nbClasses) {
-			centroids = new ArrayList<VectorSignature>();
+			centroids = new ArrayList<DefaultVectorSignature>();
 			try {
-				for (VectorSignature s : points) {
+				for (DefaultVectorSignature s : points) {
 					centroids.add(s.clone());
 				}
 				computeAffectation(points);
@@ -249,7 +250,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 	 * @param points
 	 *            the points
 	 */
-	private void computeAffectation(List<VectorSignature> points) {
+	private void computeAffectation(List<DefaultVectorSignature> points) {
 		TaskManager tm = TaskManager.getSecondLevelInstance();
 		try {
 			tm.submitMultiForAll(points, ComputeAffectationWorker.class, this, "KMeans", 0);
@@ -271,9 +272,9 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	private List<VectorSignature> computeCentroids(final List<VectorSignature> points, final List<VectorSignature> oldCentroids) throws SignatureException {
+	private List<DefaultVectorSignature> computeCentroids(final List<DefaultVectorSignature> points, final List<DefaultVectorSignature> oldCentroids) throws SignatureException {
 		int dim = points.get(0).getSize();
-		centroids = new ArrayList<VectorSignature>();
+		centroids = new ArrayList<DefaultVectorSignature>();
 		for (int c = 0; c < nbClasses; c++) {
 			if ((initialCentroidsType == PROVIDED_INTITAL_CENTROIDS) && (!ableToMove.get(c)) && (oldCentroids != null)) {
 				try {
@@ -289,7 +290,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 		Arrays.fill(cardinality, 0);
 
 		int p = 0;
-		for (VectorSignature s : points) {
+		for (DefaultVectorSignature s : points) {
 			if ((initialCentroidsType != PROVIDED_INTITAL_CENTROIDS) || (ableToMove.get(affectation[p]))) {
 				centroids.get(affectation[p]).add(s);
 				cardinality[affectation[p]]++;
@@ -298,7 +299,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 		}
 
 		int c = 0;
-		for (VectorSignature s : centroids) {
+		for (DefaultVectorSignature s : centroids) {
 			if (cardinality[c] > 0) {
 				s.multiply(1.0 / cardinality[c]);
 			}
@@ -312,7 +313,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 	 * @see plugins.nherve.toolbox.image.feature.Distance#computeDistance(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public double computeDistance(VectorSignature s1, VectorSignature s2) throws SignatureException {
+	public double computeDistance(DefaultVectorSignature s1, DefaultVectorSignature s2) throws SignatureException {
 		return distance.computeDistance(s1, s2);
 	}
 
@@ -325,7 +326,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	private double computeStabilizationCriterion(final List<VectorSignature> oldCentroids) throws SignatureException {
+	private double computeStabilizationCriterion(final List<DefaultVectorSignature> oldCentroids) throws SignatureException {
 		if (oldCentroids == null) {
 			return nbClasses * stabilizationCriterion * 100.0;
 		}
@@ -383,16 +384,16 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#getAffectations(java.util.List)
 	 */
 	@Override
-	public int[] getAffectations(List<VectorSignature> pts) throws ClusteringException {
+	public int[] getAffectations(List<DefaultVectorSignature> pts) throws ClusteringException {
 		int[] othAff = new int[pts.size()];
 
 		try {
 			int p = 0;
-			for (VectorSignature s : pts) {
+			for (DefaultVectorSignature s : pts) {
 				double minDist = Double.MAX_VALUE;
 				int closestCentroid = 0;
 				int c = 0;
-				for (VectorSignature ct : centroids) {
+				for (DefaultVectorSignature ct : centroids) {
 					double d = computeDistance(s, ct);
 					if (d < minDist) {
 						minDist = d;
@@ -414,7 +415,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 	 * @see plugins.nherve.toolbox.image.feature.ClusteringAlgorithm#getCentroids()
 	 */
 	@Override
-	public List<VectorSignature> getCentroids() throws ClusteringException {
+	public List<DefaultVectorSignature> getCentroids() throws ClusteringException {
 		return centroids;
 	}
 
@@ -460,7 +461,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public void sanityCheck(final List<VectorSignature> points) throws SignatureException {
+	public void sanityCheck(final List<DefaultVectorSignature> points) throws SignatureException {
 		Random rd = new Random(System.currentTimeMillis());
 		int nbTry = points.size() / 10;
 		for (int t = 0; t < nbTry; t++) {
@@ -481,17 +482,17 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	private void initialCentroids(final List<VectorSignature> points) throws SignatureException {
+	private void initialCentroids(final List<DefaultVectorSignature> points) throws SignatureException {
 		log("initialCentroids called (" + initialCentroidsType + ")");
 
-		centroids = new ArrayList<VectorSignature>();
+		centroids = new ArrayList<DefaultVectorSignature>();
 
 		if (initialCentroidsType == STANDARD_INTITAL_CENTROIDS) {
 			int dim = points.get(0).getSize();
 			double step = 1.0 / (nbClasses - 1);
 			double v = 0;
 			for (int c = 0; c < nbClasses; c++) {
-				VectorSignature s = new DenseVectorSignature(dim);
+				DefaultVectorSignature s = new DenseVectorSignature(dim);
 				for (int d = 0; d < dim; d++) {
 					s.set(d, v);
 				}
@@ -505,7 +506,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 			int c = 0;
 
 			if (initialCentroidsType == PROVIDED_INTITAL_CENTROIDS) {
-				for (VectorSignature s : initialCentroids) {
+				for (DefaultVectorSignature s : initialCentroids) {
 					try {
 						centroids.add(s.clone());
 					} catch (CloneNotSupportedException e) {
@@ -552,7 +553,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 	 * @param centroids
 	 *            the new centroids
 	 */
-	public void setCentroids(List<VectorSignature> centroids) {
+	public void setCentroids(List<DefaultVectorSignature> centroids) {
 		this.centroids = centroids;
 	}
 
@@ -576,7 +577,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<VectorSignature> impl
 		this.initialCentroidsType = initialCentroidsType;
 
 		if (initialCentroidsType == PROVIDED_INTITAL_CENTROIDS) {
-			initialCentroids = new ArrayList<VectorSignature>();
+			initialCentroids = new ArrayList<DefaultVectorSignature>();
 			ableToMove = new ArrayList<Boolean>();
 		}
 	}

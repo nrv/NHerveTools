@@ -11,7 +11,7 @@ import plugins.nherve.toolbox.image.ImageLoader;
 import plugins.nherve.toolbox.image.feature.FeatureException;
 import plugins.nherve.toolbox.image.feature.SegmentableImage;
 import plugins.nherve.toolbox.image.feature.signature.BagOfSignatures;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 
@@ -113,7 +113,7 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 
 		if (db.containsGlobalDescriptor(desc)) {
 			for (ImageEntry<T> e : db) {
-				VectorSignature s = db.getGlobalSignature(e, desc);
+				DefaultVectorSignature s = db.getGlobalSignature(e, desc);
 				if (s != null) {
 					if (sigSize < 0) {
 						sigSize = s.getSize();
@@ -123,9 +123,9 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 			}
 		} else if (db.containsLocalDescriptor(desc)) {
 			for (ImageEntry<T> e : db) {
-				BagOfSignatures<VectorSignature> bag = db.getLocalSignature(e, desc);
+				BagOfSignatures<DefaultVectorSignature> bag = db.getLocalSignature(e, desc);
 				if (bag != null) {
-					for (VectorSignature s : bag) {
+					for (DefaultVectorSignature s : bag) {
 						if (sigSize < 0) {
 							sigSize = s.getSize();
 						}
@@ -146,7 +146,7 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 
 		if (db.containsGlobalDescriptor(desc)) {
 			for (ImageEntry<T> e : db) {
-				VectorSignature s = db.getGlobalSignature(e, desc);
+				DefaultVectorSignature s = db.getGlobalSignature(e, desc);
 				if (s != null) {
 					w.write(Long.toString(e.getId()));
 					for (int d = 0; d < s.getSize(); d++) {
@@ -157,10 +157,10 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 			}
 		} else if (db.containsLocalDescriptor(desc)) {
 			for (ImageEntry<T> e : db) {
-				BagOfSignatures<VectorSignature> bag = db.getLocalSignature(e, desc);
+				BagOfSignatures<DefaultVectorSignature> bag = db.getLocalSignature(e, desc);
 				if (bag != null) {
 					int lid = 0;
-					for (VectorSignature s : bag) {
+					for (DefaultVectorSignature s : bag) {
 						w.write(Long.toString(getUniqueId(e.getId(), lid)));
 						for (int d = 0; d < s.getSize(); d++) {
 							w.write(" " + s.get(d));

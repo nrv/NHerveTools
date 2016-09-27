@@ -16,6 +16,7 @@ import plugins.nherve.toolbox.image.feature.SegmentableImage;
 import plugins.nherve.toolbox.image.feature.SignatureDistance;
 import plugins.nherve.toolbox.image.feature.signature.BagOfSignatures;
 import plugins.nherve.toolbox.image.feature.signature.L1Distance;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 
 public class QueryManager<T extends SegmentableImage> extends Algorithm {
@@ -137,15 +138,15 @@ public class QueryManager<T extends SegmentableImage> extends Algorithm {
 	}
 
 	public Response knnQuery(final String queryId, final ImageDatabase<T> db, final String desc, final ImageEntry<T> query, final int k) throws FeatureException {
-		VectorSignature vs = db.getGlobalSignature(query, desc);
+		DefaultVectorSignature vs = db.getGlobalSignature(query, desc);
 		return knnQuery(queryId, db, desc, vs, k);
 	}
 
-	public Response knnQuery(final String queryId, final ImageDatabase<T> db, final String desc, final VectorSignature query, final int k) throws FeatureException {
+	public Response knnQuery(final String queryId, final ImageDatabase<T> db, final String desc, final DefaultVectorSignature query, final int k) throws FeatureException {
 		Response result = new Response(queryId);
 		if (db.containsGlobalDescriptor(desc)) {
 			for (ImageEntry<T> e : db) {
-				VectorSignature s = db.getGlobalSignature(e, desc);
+				DefaultVectorSignature s = db.getGlobalSignature(e, desc);
 				if (s != null) {
 					ResponseUnit ru = new ResponseUnit();
 					ru.entry = e;
@@ -155,10 +156,10 @@ public class QueryManager<T extends SegmentableImage> extends Algorithm {
 			}
 		} else if (db.containsLocalDescriptor(desc)) {
 			for (ImageEntry<T> e : db) {
-				BagOfSignatures<VectorSignature> bag = db.getLocalSignature(e, desc);
+				BagOfSignatures<DefaultVectorSignature> bag = db.getLocalSignature(e, desc);
 				if (bag != null) {
 					int lid = 0;
-					for (VectorSignature s : bag) {
+					for (DefaultVectorSignature s : bag) {
 						ResponseUnit ru = new ResponseUnit();
 						ru.entry = e;
 						ru.lid = lid;

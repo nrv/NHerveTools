@@ -29,7 +29,7 @@ import java.util.List;
 public class VectorSignatureConcatenator {
 	
 	/** The all. */
-	private List<VectorSignature[]> all;
+	private List<DefaultVectorSignature[]> all;
 	
 	/** The coef. */
 	private List<Double> coef;
@@ -56,7 +56,7 @@ public class VectorSignatureConcatenator {
 	 */
 	public VectorSignatureConcatenator(int type, boolean normalization) {
 		super();
-		this.all = new ArrayList<VectorSignature[]>();
+		this.all = new ArrayList<DefaultVectorSignature[]>();
 		this.coef = new ArrayList<Double>();
 		this.size = 0;
 		this.dim = 0;
@@ -72,7 +72,7 @@ public class VectorSignatureConcatenator {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public void add(VectorSignature[] vsa) throws SignatureException {
+	public void add(DefaultVectorSignature[] vsa) throws SignatureException {
 		add(vsa, 1.0);
 	}
 	
@@ -84,8 +84,8 @@ public class VectorSignatureConcatenator {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public void add(VectorSignature vsa) throws SignatureException {
-		add(new VectorSignature[]{vsa}, 1.0);
+	public void add(DefaultVectorSignature vsa) throws SignatureException {
+		add(new DefaultVectorSignature[]{vsa}, 1.0);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class VectorSignatureConcatenator {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public void add(VectorSignature[] vsa, double c) throws SignatureException {
+	public void add(DefaultVectorSignature[] vsa, double c) throws SignatureException {
 		if (size == 0) {
 			size = vsa.length;
 		} else if (vsa.length == 0) {
@@ -118,17 +118,17 @@ public class VectorSignatureConcatenator {
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
-	public VectorSignature[] concatenate() throws SignatureException {
+	public DefaultVectorSignature[] concatenate() throws SignatureException {
 		if ((all.size() == 0) || (size == 0)) {
 			throw new SignatureException("No vector to concatenate");
 		}
-		VectorSignature[] result = new VectorSignature[size];
+		DefaultVectorSignature[] result = new DefaultVectorSignature[size];
 		for (int s = 0; s < size; s++) {
-			VectorSignature sig = VectorSignature.getEmptySignature(type, dim);
+			DefaultVectorSignature sig = DefaultVectorSignature.getEmptySignature(type, dim);
 			int c = 0;
 			int d = 0;
-			for (VectorSignature[] vsa : all) {
-				VectorSignature vs = vsa[s];
+			for (DefaultVectorSignature[] vsa : all) {
+				DefaultVectorSignature vs = vsa[s];
 				for (int ld = 0; ld < vs.getSize(); ld++) {
 					sig.set(d, vs.get(ld) * coef.get(c));
 					d++;

@@ -21,7 +21,7 @@ package plugins.nherve.toolbox.image.feature.learning;
 import java.util.List;
 
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 
 /**
@@ -69,9 +69,9 @@ public class PowEachBin extends DataProcessor {
 	 * @see plugins.nherve.toolbox.image.feature.learning.DataProcessor#apply(plugins.nherve.toolbox.image.feature.signature.VectorSignature)
 	 */
 	@Override
-	public VectorSignature apply(VectorSignature sig) throws SignatureException {
+	public DefaultVectorSignature apply(DefaultVectorSignature sig) throws SignatureException {
 		try {
-			VectorSignature res = sig.clone();
+			DefaultVectorSignature res = sig.clone();
 			for (int d = 0; d < sig.getSize(); d++) {
 				res.set(d, Math.pow(sig.get(d), p));
 			}
@@ -85,7 +85,7 @@ public class PowEachBin extends DataProcessor {
 	 * @see plugins.nherve.toolbox.image.feature.learning.DataProcessor#estimateParameters(java.util.List)
 	 */
 	@Override
-	public void estimateParameters(List<VectorSignature> sigs) throws SignatureException {
+	public void estimateParameters(List<DefaultVectorSignature> sigs) throws SignatureException {
 		// Nothing to do here
 	}
 

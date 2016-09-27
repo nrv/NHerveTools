@@ -23,7 +23,7 @@ import java.util.List;
 import plugins.nherve.toolbox.image.feature.clustering.ClusteringException;
 import plugins.nherve.toolbox.image.feature.clustering.KMeans;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 
 /**
@@ -66,12 +66,12 @@ public class PseudoFuzzyKMeans extends PseudoFuzzyClusteringAlgorithmImpl {
 	 * @see plugins.nherve.toolbox.image.feature.fuzzy.FuzzyClusteringAlgorithm#getMemberships(plugins.nherve.toolbox.image.feature.signature.VectorSignature)
 	 */
 	@Override
-	public double[] getMemberships(VectorSignature point) throws ClusteringException {
+	public double[] getMemberships(DefaultVectorSignature point) throws ClusteringException {
 		try {
 			double[] m = new double[getNbClasses()];
 			double sum = 0;
 			int c = 0;
-			for (VectorSignature s : getCentroids()) {
+			for (DefaultVectorSignature s : getCentroids()) {
 				double d = ((KMeans)internalAlgorithm).computeDistance(point, s);
 				if (d > 0) {
 					m[c] = 1 / d;
@@ -98,10 +98,10 @@ public class PseudoFuzzyKMeans extends PseudoFuzzyClusteringAlgorithmImpl {
 	 * @see plugins.nherve.toolbox.image.feature.fuzzy.FuzzyClusteringAlgorithm#getMemberships(java.util.List, int)
 	 */
 	@Override
-	public double[] getMemberships(List<VectorSignature> points, int cluster) throws ClusteringException {
+	public double[] getMemberships(List<DefaultVectorSignature> points, int cluster) throws ClusteringException {
 		double[] m = new double[points.size()];
 		int pi = 0;
-		for (VectorSignature p : points) {
+		for (DefaultVectorSignature p : points) {
 			double[] tm = getMemberships(p);
 			m[pi] = tm[cluster];
 			pi++;
@@ -113,7 +113,7 @@ public class PseudoFuzzyKMeans extends PseudoFuzzyClusteringAlgorithmImpl {
 	 * @see plugins.nherve.toolbox.image.feature.fuzzy.FuzzyClusteringAlgorithm#getMemberships(java.util.List, int, java.util.List)
 	 */
 	@Override
-	public double[] getMemberships(List<VectorSignature> points, int cluster, List<Integer> clustersToConsider) throws ClusteringException {
+	public double[] getMemberships(List<DefaultVectorSignature> points, int cluster, List<Integer> clustersToConsider) throws ClusteringException {
 		throw new ClusteringException("Not yet implemented");
 	}
 
@@ -121,7 +121,7 @@ public class PseudoFuzzyKMeans extends PseudoFuzzyClusteringAlgorithmImpl {
 	 * @see plugins.nherve.toolbox.image.feature.fuzzy.FuzzyClusteringAlgorithm#getMemberships(plugins.nherve.toolbox.image.feature.signature.VectorSignature, java.util.List)
 	 */
 	@Override
-	public double[] getMemberships(VectorSignature point, List<Integer> clustersToConsider) throws ClusteringException {
+	public double[] getMemberships(DefaultVectorSignature point, List<Integer> clustersToConsider) throws ClusteringException {
 		throw new ClusteringException("Not yet implemented");
 	}
 }
