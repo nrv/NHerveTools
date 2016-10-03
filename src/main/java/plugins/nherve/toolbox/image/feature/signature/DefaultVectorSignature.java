@@ -1,19 +1,19 @@
 /*
  * Copyright 2010, 2011 Institut Pasteur.
  * Copyright 2012 Institut National de l'Audiovisuel.
- * 
+ *
  * This file is part of NHerveTools.
- * 
+ *
  * NHerveTools is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * NHerveTools is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with NHerveTools. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,26 +21,25 @@ package plugins.nherve.toolbox.image.feature.signature;
 
 import java.text.DecimalFormat;
 
-
 /**
  * The Class VectorSignature.
- * 
+ *
  * @author Nicolas HERVE - nherve@ina.fr
  */
 public abstract class DefaultVectorSignature implements VectorSignature {
-	
+
 	/** The Constant DENSE_VECTOR_SIGNATURE. */
 	public final static int DENSE_VECTOR_SIGNATURE = 1;
-	
+
 	/** The Constant df. */
 	private final static DecimalFormat df = new DecimalFormat("0.000");
 
 	/** The Constant SPARSE_VECTOR_SIGNATURE. */
 	public final static int SPARSE_VECTOR_SIGNATURE = 2;
-	
+
 	/**
 	 * Gets the empty signature.
-	 * 
+	 *
 	 * @param type
 	 *            the type
 	 * @param size
@@ -71,12 +70,13 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 
 	/**
 	 * Adds the.
-	 * 
+	 *
 	 * @param other
 	 *            the other
 	 * @throws SignatureException
 	 *             the signature exception
 	 */
+	@Override
 	public void add(VectorSignature other) throws SignatureException {
 		for (int d = 0; d < getSize(); d++) {
 			addTo(d, other.get(d));
@@ -85,7 +85,7 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 
 	/**
 	 * Adds the.
-	 * 
+	 *
 	 * @param other
 	 *            the other
 	 * @param mult
@@ -101,7 +101,7 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 
 	/**
 	 * Adds the to.
-	 * 
+	 *
 	 * @param idx
 	 *            the idx
 	 * @param val
@@ -113,14 +113,17 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 		set(idx, get(idx) + val);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public abstract DefaultVectorSignature clone() throws CloneNotSupportedException;
 
 	/**
 	 * Concat.
-	 * 
+	 *
 	 * @param other
 	 *            the other
 	 * @throws SignatureException
@@ -128,19 +131,26 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 	 */
 	public abstract void concat(DefaultVectorSignature other) throws SignatureException;
 
+	public double dot(VectorSignature other) throws SignatureException {
+		double dot = 0;
+		for (int d = 0; d < getSize(); d++) {
+			dot += get(d) * other.get(d);
+		}
+		return dot;
+	}
+
 	/**
 	 * Gets the additional information.
-	 * 
+	 *
 	 * @return the additional information
 	 */
 	public Object getAdditionalInformation() {
 		return additionalInformation;
 	}
 
-
 	/**
 	 * Multiply.
-	 * 
+	 *
 	 * @param coef
 	 *            the coef
 	 * @throws SignatureException
@@ -154,7 +164,7 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 
 	/**
 	 * Multiply.
-	 * 
+	 *
 	 * @param idx
 	 *            the idx
 	 * @param coef
@@ -165,20 +175,21 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 	public void multiply(int idx, double coef) throws SignatureException {
 		set(idx, get(idx) * coef);
 	}
-	
+
 	public double norm() throws SignatureException {
 		double norm = 0;
 		for (int d = 0; d < getSize(); d++) {
 			double v = get(d);
 			norm += v * v;
 		}
-		
+
 		return Math.sqrt(norm);
 	}
 
+	@Override
 	public void normalizeL2(boolean force) throws SignatureException {
 		double norm = norm();
-		
+
 		if (norm != 0.0) {
 			multiply(1.0 / norm);
 		} else if (force) {
@@ -188,7 +199,7 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 
 	/**
 	 * Normalize sum to.
-	 * 
+	 *
 	 * @param n
 	 *            the n
 	 * @param force
@@ -205,10 +216,10 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 			setAll(n / getSize());
 		}
 	}
-	
+
 	/**
 	 * Normalize sum to one.
-	 * 
+	 *
 	 * @param force
 	 *            the force
 	 * @throws SignatureException
@@ -220,7 +231,7 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 
 	/**
 	 * Sets the.
-	 * 
+	 *
 	 * @param idx
 	 *            the idx
 	 * @param val
@@ -232,7 +243,7 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 
 	/**
 	 * Sets the additional information.
-	 * 
+	 *
 	 * @param additionalInformation
 	 *            the new additional information
 	 */
@@ -242,7 +253,7 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 
 	/**
 	 * Sets the all.
-	 * 
+	 *
 	 * @param val
 	 *            the new all
 	 * @throws SignatureException
@@ -258,7 +269,7 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 
 	/**
 	 * Sum.
-	 * 
+	 *
 	 * @return the double
 	 * @throws SignatureException
 	 *             the signature exception
@@ -273,7 +284,9 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 		return sum;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
