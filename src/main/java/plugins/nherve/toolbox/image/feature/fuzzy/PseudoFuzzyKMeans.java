@@ -22,8 +22,8 @@ import java.util.List;
 
 import plugins.nherve.toolbox.image.feature.clustering.ClusteringException;
 import plugins.nherve.toolbox.image.feature.clustering.KMeans;
-import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 
 
 /**

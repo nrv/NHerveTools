@@ -7,6 +7,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import plugins.nherve.toolbox.image.feature.SignatureDistance;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.DenseVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.DynamicSparseVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.L1Distance;
@@ -14,7 +15,6 @@ import plugins.nherve.toolbox.image.feature.signature.L2Distance;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.SparseVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.VectorAngleDistance;
-import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 
 public class TestDistances {

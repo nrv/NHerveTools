@@ -24,8 +24,8 @@ import plugins.nherve.toolbox.Algorithm;
 import plugins.nherve.toolbox.image.db.ImageDatabaseSplit;
 import plugins.nherve.toolbox.image.feature.FeatureException;
 import plugins.nherve.toolbox.image.feature.SegmentableImage;
-import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 
 
 /**

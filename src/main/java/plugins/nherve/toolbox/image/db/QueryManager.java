@@ -15,8 +15,8 @@ import plugins.nherve.toolbox.image.feature.FeatureException;
 import plugins.nherve.toolbox.image.feature.SegmentableImage;
 import plugins.nherve.toolbox.image.feature.SignatureDistance;
 import plugins.nherve.toolbox.image.feature.signature.BagOfSignatures;
-import plugins.nherve.toolbox.image.feature.signature.L1Distance;
 import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.L1Distance;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 
 public class QueryManager<T extends SegmentableImage> extends Algorithm {

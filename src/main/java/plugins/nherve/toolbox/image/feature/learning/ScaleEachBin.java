@@ -21,8 +21,8 @@ package plugins.nherve.toolbox.image.feature.learning;
 import java.util.Arrays;
 import java.util.List;
 
-import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 
 
 /**

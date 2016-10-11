@@ -23,8 +23,8 @@ import plugins.nherve.toolbox.image.db.ImageDatabase;
 import plugins.nherve.toolbox.image.feature.Descriptor;
 import plugins.nherve.toolbox.image.feature.Segmentable;
 import plugins.nherve.toolbox.image.feature.Signature;
-import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 
 /**
  * The Class DefaultDescriptorImpl.

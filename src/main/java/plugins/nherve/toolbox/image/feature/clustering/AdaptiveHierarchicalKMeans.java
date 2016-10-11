@@ -25,8 +25,8 @@ import java.util.Map;
 
 import plugins.nherve.toolbox.image.feature.DefaultClusteringAlgorithmImpl;
 import plugins.nherve.toolbox.image.feature.Distance;
-import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 
 
 /**

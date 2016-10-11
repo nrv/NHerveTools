@@ -19,9 +19,9 @@
 package plugins.nherve.toolbox.image.feature.learning;
 
 import plugins.nherve.toolbox.image.feature.SignatureDistance;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.L2Distance;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 /**
  * The Class KNNClassifier.

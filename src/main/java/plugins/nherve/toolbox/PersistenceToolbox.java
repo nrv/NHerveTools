@@ -38,11 +38,11 @@ import java.util.Map;
 
 import plugins.nherve.toolbox.image.feature.Signature;
 import plugins.nherve.toolbox.image.feature.signature.BagOfSignatures;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.DenseVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.IndexSignature;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.SparseVectorSignature;
-import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 
 /**
  * The Class PersistenceToolbox.

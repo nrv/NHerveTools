@@ -30,10 +30,10 @@ import plugins.nherve.toolbox.concurrent.TaskException;
 import plugins.nherve.toolbox.concurrent.TaskManager;
 import plugins.nherve.toolbox.image.feature.SignatureDistance;
 import plugins.nherve.toolbox.image.feature.clustering.ClusteringException;
+import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.DenseVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.L2Distance;
 import plugins.nherve.toolbox.image.feature.signature.SignatureException;
-import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
 import plugins.nherve.toolbox.image.feature.signature.VectorSignature;
 
 

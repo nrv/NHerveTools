@@ -38,8 +38,8 @@ import plugins.nherve.toolbox.image.feature.descriptor.GlobalDescriptor;
 import plugins.nherve.toolbox.image.feature.descriptor.LocalDescriptor;
 import plugins.nherve.toolbox.image.feature.region.Pixel;
 import plugins.nherve.toolbox.image.feature.signature.BagOfSignatures;
-import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 import plugins.nherve.toolbox.image.feature.signature.DefaultVectorSignature;
+import plugins.nherve.toolbox.image.feature.signature.SignatureException;
 
 /**
  * The Class ImageDatabaseIndexer.
