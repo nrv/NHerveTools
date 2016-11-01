@@ -113,10 +113,7 @@ public class DifferentColorsMap {
 
 	public String getHtml(int idx) {
 		Color c = get(idx);
-		String html = "#";
-		html += Integer.toHexString(c.getRed());
-		html += Integer.toHexString(c.getGreen());
-		html += Integer.toHexString(c.getBlue());
+		String html = String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
 		return html;
 	}
 	
