@@ -42,6 +42,7 @@ public class AgglomerativeClustering<T extends Signature> extends DefaultCluster
 					} catch (SignatureException e) {
 						throw new ClusteringException(e);
 					}
+//					log(" - " + sd.d);
 					distances.add(sd);
 				}
 			}
@@ -140,6 +141,7 @@ public class AgglomerativeClustering<T extends Signature> extends DefaultCluster
 						affectation[sd.i] = affectation[sd.j];
 					} else {
 						nbClasses++;
+						log("classes : " + nbClasses);
 						affectation[sd.i] = nbClasses;
 						affectation[sd.j] = nbClasses;
 					}
