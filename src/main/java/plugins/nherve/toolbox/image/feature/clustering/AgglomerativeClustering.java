@@ -75,7 +75,7 @@ public class AgglomerativeClustering<T extends Signature> extends DefaultCluster
 	public void compute(List<T> points) throws ClusteringException {
 		List<AgglomerativeClusteringSingleDistance> distances = new ArrayList<AgglomerativeClusteringSingleDistance>();
 		
-		log("AgglomerativeClustering - Distances cache");
+		info("AgglomerativeClustering - Distances cache");
 		TaskManager tm = TaskManager.getSecondLevelInstance();
 		int nbSplit = tm.getCorePoolSize();
 		int nb = (points.size() - 1) * points.size() / 2;
@@ -106,11 +106,11 @@ public class AgglomerativeClustering<T extends Signature> extends DefaultCluster
 			}
 		}
 		
-		log("AgglomerativeClustering - nb = " + nb + " / results = " + distances.size());
+		info("AgglomerativeClustering - nb = " + nb + " / results = " + distances.size());
 		
 		// log("AgglomerativeClustering - Distances : " + distances.size() + " / " + idx(points.size() - 1, points.size() - 1, points.size()));
 		
-		log("AgglomerativeClustering - Sorting distances");
+		info("AgglomerativeClustering - Sorting distances");
 		
 		Collections.sort(distances, new Comparator<AgglomerativeClusteringSingleDistance>() {
 
@@ -123,10 +123,10 @@ public class AgglomerativeClustering<T extends Signature> extends DefaultCluster
 		double max = Collections.max(distances).d;
 		double min = Collections.min(distances).d;
 		
-		log("AgglomerativeClustering - min = " + min);
-		log("AgglomerativeClustering - max = " + max);
+		info("AgglomerativeClustering - min = " + min);
+		info("AgglomerativeClustering - max = " + max);
 		
-		log("AgglomerativeClustering - Agglomerating");
+		info("AgglomerativeClustering - Agglomerating");
 		affectation = new int[points.size()];
 		Arrays.fill(affectation, 0);
 		nbClasses = 0;
@@ -141,7 +141,7 @@ public class AgglomerativeClustering<T extends Signature> extends DefaultCluster
 						affectation[sd.i] = affectation[sd.j];
 					} else {
 						nbClasses++;
-						log("classes : " + nbClasses);
+						info("classes : " + nbClasses);
 						affectation[sd.i] = nbClasses;
 						affectation[sd.j] = nbClasses;
 					}

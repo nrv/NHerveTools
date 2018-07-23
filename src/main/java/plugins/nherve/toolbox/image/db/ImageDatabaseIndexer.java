@@ -51,11 +51,11 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 	private class PartialDumpProcess implements Runnable {
 		@Override
 		public void run() {
-			log("PartialDumpProcess started");
+			info("PartialDumpProcess started");
 			ImageDatabasePersistence<T> ptv = new ImageDatabasePersistence<T>(db);
 			ptv.setLogEnabled(isLogEnabled());
 
-			log("processed : " + countProcessed + " - ignored : " + countIgnored);
+			info("processed : " + countProcessed + " - ignored : " + countIgnored);
 
 			while (!readyToDumpHeaders) {
 				try {
@@ -66,7 +66,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 			}
 
 			try {
-				log("processed : " + countProcessed + " - ignored : " + countIgnored);
+				info("processed : " + countProcessed + " - ignored : " + countIgnored);
 				ptv.dumpHeaders();
 			} catch (IOException e1) {
 				err(e1);
@@ -76,7 +76,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 				try {
 					Thread.sleep(getPartialDumpSleep());
 					try {
-						log("processed : " + countProcessed + " - ignored : " + countIgnored);
+						info("processed : " + countProcessed + " - ignored : " + countIgnored);
 						ptv.dumpSignatures();
 					} catch (IOException e) {
 						err(e);
@@ -86,7 +86,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 				}
 			}
 
-			log("PartialDumpProcess stopped");
+			info("PartialDumpProcess stopped");
 		}
 	}
 

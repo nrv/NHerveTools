@@ -90,7 +90,7 @@ public abstract class LearningAlgorithm extends Algorithm {
 	 *             the classifier exception
 	 */
 	protected DefaultVectorSignature[][] dataProcess(DefaultVectorSignature[] positive, DefaultVectorSignature[] negative) throws ClassifierException {
-		log("Launching DataProcessor for learn data");
+		info("Launching DataProcessor for learn data");
 		DefaultVectorSignature[][] data = new DefaultVectorSignature[2][];
 		
 		try {

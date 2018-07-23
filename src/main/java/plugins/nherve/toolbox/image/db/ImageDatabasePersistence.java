@@ -90,7 +90,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public void dump() throws IOException {
-		log("Dumping database " + db.getName());
+		info("Dumping database " + db.getName());
 		dumpHeaders();
 		dumpSignatures();
 	}
@@ -111,7 +111,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public void dumpHeaders() throws IOException {
-		log("Dumping database headers for " + db.getName());
+		info("Dumping database headers for " + db.getName());
 		RandomAccessFile raf = null;
 		try {
 			raf = getHeadersFile(true);
@@ -149,7 +149,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 				raf.close();
 			}
 		}
-		log("Dumping headers done");
+		info("Dumping headers done");
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public void dumpSignatures(String desc) throws IOException {
-		log("Dumping descriptor " + desc + " for " + db.getName());
+		info("Dumping descriptor " + desc + " for " + db.getName());
 		boolean global = true;
 
 		if (db.containsLocalDescriptor(desc)) {
@@ -197,7 +197,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 				raf.close();
 			}
 		}
-		log("Dumping descriptor " + desc + " done (" + count + " / " + db.size() + ")");
+		info("Dumping descriptor " + desc + " done (" + count + " / " + db.size() + ")");
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public void loadHeaders() throws IOException {
-		log("Loading headers");
+		info("Loading headers");
 		RandomAccessFile raf = null;
 		try {
 			raf = getHeadersFile(false);
@@ -357,7 +357,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 	 *             Signals that an I/O exception has occurred.
 	 */
 	public void loadSignatures(String desc, boolean allowPartialNameMatch) throws IOException {
-		log("Loading " + desc + " signatures");
+		info("Loading " + desc + " signatures");
 		boolean global = true;
 
 		if (allowPartialNameMatch) {
@@ -400,7 +400,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 						}
 					}
 					if (count % 10000 == 0) {
-						log(" - " + count);
+						info(" - " + count);
 					}
 				}
 			} catch (IOException e) {

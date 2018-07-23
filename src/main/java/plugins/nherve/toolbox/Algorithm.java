@@ -88,7 +88,7 @@ public class Algorithm implements AbleToLogMessages {
 	 * @see plugins.nherve.toolbox.AbleToLogMessages#log(java.lang.String)
 	 */
 	@Override
-	public void log(String message) {
+	public void info(String message) {
 		if (isLogEnabled()) {
 			if (isLogTime()) {
 				outWithTime(message);
@@ -101,15 +101,15 @@ public class Algorithm implements AbleToLogMessages {
 	/**
 	 * Log.
 	 */
-	public void log() {
-		log("");
+	public void info() {
+		info("");
 	}
 	
 	/* (non-Javadoc)
 	 * @see plugins.nherve.toolbox.AbleToLogMessages#logWarning(java.lang.String)
 	 */
 	@Override
-	public void logWarning(String message) {
+	public void warn(String message) {
 		if (isLogTime()) {
 			errWithTime("WARNING : " + message);
 		} else {
@@ -121,7 +121,7 @@ public class Algorithm implements AbleToLogMessages {
 	 * @see plugins.nherve.toolbox.AbleToLogMessages#logError(java.lang.String)
 	 */
 	@Override
-	public void logError(String message) {
+	public void error(String message) {
 		if (isLogTime()) {
 			errWithTime("ERROR : " + message);
 		} else {
@@ -130,7 +130,7 @@ public class Algorithm implements AbleToLogMessages {
 	}
 	
 	@Override
-	public void logError(Throwable e) {
+	public void error(Throwable e) {
 		if (isLogTime()) {
 			errWithTime("ERROR : " + e.getClass().getName() + " : " + e.getMessage());
 		} else {

@@ -182,7 +182,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<DefaultVectorSignatur
 	 */
 	@Override
 	public void compute(final List<DefaultVectorSignature> points) throws ClusteringException {
-		log("Launching KMeans on " + points.size() + " points to produce " + nbClasses + " classes");
+		info("Launching KMeans on " + points.size() + " points to produce " + nbClasses + " classes");
 
 		List<DefaultVectorSignature> oldCentroids = null;
 		affectation = new int[points.size()];
@@ -223,7 +223,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<DefaultVectorSignatur
 				
 				computeAffectation(points);
 
-				log("[It " + iteration + "] " + stab);
+				info("[It " + iteration + "] " + stab);
 				
 				if (isLogEnabled()) {
 					emptyCluster();
@@ -358,7 +358,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<DefaultVectorSignatur
 			for (int c = 0; c < nbClasses; c++) {
 				msg += cardinality[c] + "; ";
 			}
-			log(msg);
+			info(msg);
 		}
 
 		for (int c = 0; c < nbClasses; c++) {
@@ -483,7 +483,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<DefaultVectorSignatur
 	 *             the signature exception
 	 */
 	private void initialCentroids(final List<DefaultVectorSignature> points) throws SignatureException {
-		log("initialCentroids called (" + initialCentroidsType + ")");
+		info("initialCentroids called (" + initialCentroidsType + ")");
 
 		centroids = new ArrayList<DefaultVectorSignature>();
 
@@ -544,7 +544,7 @@ public class KMeans extends DefaultClusteringAlgorithmImpl<DefaultVectorSignatur
 
 		}
 
-		log("initialCentroids done");
+		info("initialCentroids done");
 	}
 
 	/**

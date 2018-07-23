@@ -261,7 +261,7 @@ public class ImageDatabaseSplit<T extends SegmentableImage> extends Algorithm {
 
 		if (sigSize < 0) {
 			sigSize = res.get(0).getSize();
-			log("Signature size : " + sigSize);
+			info("Signature size : " + sigSize);
 		}
 
 		return res;

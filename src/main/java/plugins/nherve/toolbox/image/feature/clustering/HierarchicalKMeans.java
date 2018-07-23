@@ -117,13 +117,13 @@ public class HierarchicalKMeans extends DefaultClusteringAlgorithmImpl<DefaultVe
 	 */
 	@Override
 	public void compute(List<DefaultVectorSignature> points) throws ClusteringException {
-		log("Launching HierarchicalKMeans on " + points.size() + " points to produce " + nbLevels + " levels of " + eachLevelNbClasses + " classes");
+		info("Launching HierarchicalKMeans on " + points.size() + " points to produce " + nbLevels + " levels of " + eachLevelNbClasses + " classes");
 		
 		Map<DefaultVectorSignature, List<DefaultVectorSignature>> currentLevel = new HashMap<DefaultVectorSignature, List<DefaultVectorSignature>>();
 		currentLevel.put(null, points);
 		
 		for (int l = 0; l < nbLevels; l++) {
-			log("----------------------------------------- Computing level " + l);
+			info("----------------------------------------- Computing level " + l);
 			currentLevel = computeNextLevel(currentLevel);
 		}
 		

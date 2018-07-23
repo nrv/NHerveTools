@@ -28,7 +28,7 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 	}
 
 	public ImageDatabase<T> create(final DatabaseConfiguration conf) throws IOException {
-		log("Creating a new database : " + conf);
+		info("Creating a new database : " + conf);
 		ImageDatabase<T> db = new ImageDatabase<T>(conf.getName(), conf.getRoot(), conf.getPictures(), conf.getSignatures());
 
 		File imagesDirectory = new File(db.getRootImageDirectory());
@@ -48,7 +48,7 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 			db.add(e);
 		}
 
-		log(" - found " + db.size() + " pictures");
+		info(" - found " + db.size() + " pictures");
 
 		return db;
 	}
@@ -63,7 +63,7 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 	}
 
 	public ImageDatabase<T> load(final DatabaseConfiguration conf, boolean headersOnly) throws IOException {
-		log("Loading database " + conf.getName());
+		info("Loading database " + conf.getName());
 		ImageDatabasePersistence<T> ptv = new ImageDatabasePersistence<T>(conf.getRoot() + "/" + conf.getSignatures());
 		ptv.setLogEnabled(isLogEnabled());
 		if (headersOnly) {
@@ -75,7 +75,7 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 		db.setRootDirectory(conf.getRoot());
 		db.setImageDirectory(conf.getPictures());
 		db.setSignatureDirectory(conf.getSignatures());
-		log("Loading done");
+		info("Loading done");
 		return db;
 	}
 
@@ -93,9 +93,9 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 		conf.populate(idxr);
 
 		if (doOnlyMissingStuff) {
-			log("Launching missing signatures extraction");
+			info("Launching missing signatures extraction");
 		} else {
-			log("Launching signatures extraction");
+			info("Launching signatures extraction");
 		}
 
 		idxr.launch();
@@ -105,7 +105,7 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 
 	public void textDump(final ImageDatabase<T> db, String desc) throws IOException, FeatureException {
 		File f = new File(db.getRootDirectory(), db.getName() + "_" + desc + ".export");
-		log("Dumping database " + db.getName() + " to " + f.getAbsolutePath());
+		info("Dumping database " + db.getName() + " to " + f.getAbsolutePath());
 		BufferedWriter w = new BufferedWriter(new FileWriter(f));
 
 		int nbNonNullSignatures = 0;

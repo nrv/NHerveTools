@@ -171,7 +171,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 			for (int c = 0; c < nbClasses; c++) {
 				msg += cardinality[c] + " ";
 			}
-			log(msg);
+			info(msg);
 		}
 
 		for (int c = 0; c < nbClasses; c++) {
@@ -230,7 +230,7 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 	public void compute(List<DefaultVectorSignature> points) throws ClusteringException {
 		nbPoints = points.size();
 
-		log("Launching FuzzyCMeans on " + nbPoints + " points to produce " + nbClasses + " classes");
+		info("Launching FuzzyCMeans on " + nbPoints + " points to produce " + nbClasses + " classes");
 
 		if (nbClasses < 2) {
 			throw new ClusteringException("nbClasses == " + nbClasses);
@@ -270,13 +270,13 @@ public class FuzzyCMeans extends DefaultFuzzyClusteringAlgorithmImpl {
 
 				computeMemberships(points);
 
-				log("[It " + iteration + "] " + stab);
+				info("[It " + iteration + "] " + stab);
 
 				iteration++;
 			} while ((iteration < nbMaxIterations) && (stab > stabilizationCriterion));
 
 			cpu.stop();
-			log("average time per iteration : " + cpu.getElapsedTimeMilli() / iteration / 1000.0 + " s");
+			info("average time per iteration : " + cpu.getElapsedTimeMilli() / iteration / 1000.0 + " s");
 
 			if (isLogEnabled()) {
 				emptyCluster();

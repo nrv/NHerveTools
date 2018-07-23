@@ -126,7 +126,7 @@ public class AdaptiveHierarchicalKMeans extends DefaultClusteringAlgorithmImpl<D
 			} catch (SignatureException e) {
 				unableTocluster.add(biggest);
 			}
-			log("[" + iter + "] " + biggestSize + " : " + dbg);
+			info("[" + iter + "] " + biggestSize + " : " + dbg);
 			iter++;
 		}
 

@@ -116,7 +116,7 @@ public class RandomClustering extends DefaultClusteringAlgorithmImpl<DefaultVect
 	@Override
 	public void compute(List<DefaultVectorSignature> points) throws ClusteringException {
 		try {
-			log("Random clustering on " + points.size() + " points");
+			info("Random clustering on " + points.size() + " points");
 			centroids = randomDistinct(points, getNbClasses());
 		} catch (SignatureException e) {
 			throw new ClusteringException(e);

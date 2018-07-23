@@ -107,7 +107,7 @@ public class SVMClassifier extends LearningAlgorithm {
 	 */
 	public void createProblem(DefaultVectorSignature[] positive) throws SignatureException {
 
-		log("SVM create problem pos(" + positive.length + ")");
+		info("SVM create problem pos(" + positive.length + ")");
 
 		sigSize = ((DefaultVectorSignature) positive[0]).getSize();
 
@@ -192,7 +192,7 @@ public class SVMClassifier extends LearningAlgorithm {
 
 		// log(pa[0].toString());
 
-		log("SVM create problem (" + (pa.length + na.length) + ") : pos(" + pa.length + "), neg(" + na.length + "), sig size(" + sigSize + ")");
+		info("SVM create problem (" + (pa.length + na.length) + ") : pos(" + pa.length + "), neg(" + na.length + "), sig size(" + sigSize + ")");
 
 		param = new svm_parameter();
 
