@@ -6,6 +6,7 @@
 	<name>NHerveToolbox</name>
 	<packaging>jar</packaging>
 	<description>Some utility classes, independent of any library</description>
+	<url>https://github.com/nrv/NHerveTools</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -160,6 +161,13 @@
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</snapshotRepository>
 	</distributionManagement>
+
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
+			<url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
+		</license>
+	</licenses>
 
 	<dependencies>
 		<dependency>
