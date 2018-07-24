@@ -49,7 +49,7 @@ public class QueryManager<T extends SegmentableImage> extends Algorithm {
 			}
 		}
 
-		protected double getCurrentMin() {
+		public double getCurrentMin() {
 			return currentMin;
 		}
 

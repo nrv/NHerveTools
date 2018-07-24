@@ -64,7 +64,7 @@ public class ImageDatabase<T extends SegmentableImage> implements Iterable<Image
 	private List<ImageEntry<T>> entries;
 
 	/** The next id. */
-	private int nextId;
+	private long nextId;
 
 	/** The root directory. */
 	private transient String rootDirectory;
@@ -100,7 +100,7 @@ public class ImageDatabase<T extends SegmentableImage> implements Iterable<Image
 		posClassesEntries = new HashMap<String, List<ImageEntry<T>>>();
 		negClassesEntries = new HashMap<String, List<ImageEntry<T>>>();
 		utdEntries = false;
-		nextId = 0;
+		nextId = 0l;
 	}
 
 	/**
@@ -481,7 +481,7 @@ public class ImageDatabase<T extends SegmentableImage> implements Iterable<Image
 	 * 
 	 * @return the next id
 	 */
-	public int getNextId() {
+	public long getNextId() {
 		return nextId;
 	}
 
@@ -601,7 +601,7 @@ public class ImageDatabase<T extends SegmentableImage> implements Iterable<Image
 	 * @param nextId
 	 *            the new next id
 	 */
-	public void setNextId(int nextId) {
+	public void setNextId(long nextId) {
 		this.nextId = nextId;
 	}
 

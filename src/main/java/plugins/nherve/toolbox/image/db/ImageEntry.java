@@ -51,7 +51,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 	private transient int height;
 
 	/** The id. */
-	private int id;
+	private long id;
 
 	/** The image. */
 	private transient T image;
@@ -74,7 +74,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 
 		width = 0;
 		height = 0;
-		id = -1;
+		id = -1l;
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 	 * 
 	 * @return the id
 	 */
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -336,7 +336,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 	 * @param id
 	 *            the new id
 	 */
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

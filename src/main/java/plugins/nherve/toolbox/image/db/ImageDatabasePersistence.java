@@ -119,7 +119,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 			PersistenceToolbox.dumpString(fc, ImageDatabase.VERSION);
 			PersistenceToolbox.dumpString(fc, db.getName());
 			PersistenceToolbox.dumpString(fc, db.getImageDirectory());
-			PersistenceToolbox.dumpInt(fc, db.getNextId());
+			PersistenceToolbox.dumpLong(fc, db.getNextId());
 
 			db.updateAvailableDescriptors();
 			Set<String> alldescs = db.getAllDescriptors();
@@ -132,7 +132,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 			List<ImageEntry<T>> entries = db.getEntries();
 			PersistenceToolbox.dumpInt(fc, entries.size());
 			for (ImageEntry<T> e : entries) {
-				PersistenceToolbox.dumpInt(fc, e.getId());
+				PersistenceToolbox.dumpLong(fc, e.getId());
 				PersistenceToolbox.dumpString(fc, e.getFile());
 				Map<String, Double> cls = e.getClasses();
 				PersistenceToolbox.dumpInt(fc, cls.size());
@@ -175,7 +175,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 			FileChannel fc = raf.getChannel();
 			PersistenceToolbox.dumpInt(fc, db.size());
 			for (ImageEntry<T> e : db.getEntries()) {
-				PersistenceToolbox.dumpInt(fc, e.getId());
+				PersistenceToolbox.dumpLong(fc, e.getId());
 				if (global) {
 					DefaultVectorSignature vs = e.getGlobalSignatures().get(desc);
 					if (vs != null) {
@@ -273,7 +273,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 			}
 			db.setName(PersistenceToolbox.loadString(fc));
 			db.setImageDirectory(PersistenceToolbox.loadString(fc));
-			db.setNextId(PersistenceToolbox.loadInt(fc));
+			db.setNextId(PersistenceToolbox.loadLong(fc));
 
 			Set<String> alldescs = db.getAllDescriptors();
 			Set<String> localdescs = db.getAvailableLocalDescriptors();
@@ -293,7 +293,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 			int nbEntries = PersistenceToolbox.loadInt(fc);
 			for (int i = 0; i < nbEntries; i++) {
 				ImageEntry<T> e = new ImageEntry<T>();
-				e.setId(PersistenceToolbox.loadInt(fc));
+				e.setId(PersistenceToolbox.loadLong(fc));
 				e.setFile(PersistenceToolbox.loadString(fc));
 				int nbc = PersistenceToolbox.loadInt(fc);
 				for (int c = 0; c < nbc; c++) {
@@ -384,7 +384,7 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 				int count = 0;
 				for (ImageEntry<T> e : db.getEntries()) {
 					count++;
-					int id = PersistenceToolbox.loadInt(fc);
+					long id = PersistenceToolbox.loadLong(fc);
 					if (id != e.getId()) {
 						throw new IOException("Wrong id of entry for " + desc + " (" + id + "/" + e.getId() + ")");
 					}

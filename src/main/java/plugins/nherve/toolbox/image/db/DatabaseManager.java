@@ -23,7 +23,7 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 		super(log);
 	}
 
-	public static long getUniqueId(int imageId, int localDescriptorId) {
+	public static long getUniqueId(long imageId, int localDescriptorId) {
 		return imageId * 100000000l + localDescriptorId;
 	}
 
