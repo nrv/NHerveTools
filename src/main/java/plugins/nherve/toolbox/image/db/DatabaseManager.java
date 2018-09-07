@@ -3,8 +3,11 @@ package plugins.nherve.toolbox.image.db;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import plugins.nherve.toolbox.Algorithm;
 import plugins.nherve.toolbox.image.ImageLoader;
@@ -35,16 +38,14 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 		if (!imagesDirectory.exists()) {
 			throw new IOException("Unknown images directory " + imagesDirectory.getAbsolutePath());
 		}
+		
+		Path rootPath = imagesDirectory.toPath();
+		
+		List<Path> images = new ArrayList<>();
+		Files.find(rootPath, Integer.MAX_VALUE, (filePath, fileAttr) -> filePath.getFileName().toString().endsWith(conf.getExtension())).forEach(images::add);
 
-		File[] images = imagesDirectory.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(conf.getExtension());
-			}
-		});
-
-		for (File image : images) {
-			ImageEntry<T> e = new ImageEntry<T>(image.getName());
+		for (Path image : images) {
+			ImageEntry<T> e = new ImageEntry<T>(rootPath.relativize(image).toString());
 			db.add(e);
 		}
 
@@ -79,7 +80,7 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 		return db;
 	}
 
-	public void index(final ImageDatabase<T> db, final ImageLoader<T> imageLoader, final IndexingConfiguration conf, final boolean partialDump, final double waitMinutesBetweenEachDump, final boolean doOnlyMissingStuff) {
+	public void index(final ImageDatabase<T> db, final ImageLoader<T> imageLoader, final IndexingConfiguration<T> conf, final boolean partialDump, final double waitMinutesBetweenEachDump, final boolean doOnlyMissingStuff) {
 		if (!doOnlyMissingStuff) {
 			db.clearDescriptors();
 		}

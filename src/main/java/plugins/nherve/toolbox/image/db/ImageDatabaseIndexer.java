@@ -57,7 +57,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 
 			info("processed : " + countProcessed + " - ignored : " + countIgnored);
 
-			while (!readyToDumpHeaders) {
+			while (!readyToDumpHeaders && running) {
 				try {
 					Thread.sleep(getPartialDumpSleep());
 				} catch (InterruptedException e) {
