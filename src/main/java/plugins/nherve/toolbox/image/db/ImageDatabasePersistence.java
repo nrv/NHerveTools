@@ -237,16 +237,28 @@ public class ImageDatabasePersistence<T extends SegmentableImage> extends Algori
 		return PersistenceToolbox.getFile(new File(rootDirectory, SIGNATURES_FILE + desc + EXT), write);
 	}
 
+	public void load() throws IOException {
+		load(true);
+	}
+	
 	/**
 	 * Load.
 	 * 
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void load() throws IOException {
+	public void load(boolean stopOnFirstError) throws IOException {
 		loadHeaders();
 		for (String d : db.getAllDescriptors()) {
-			loadSignatures(d);
+			try {
+				loadSignatures(d);
+			} catch (IOException e) {
+				if (stopOnFirstError) {
+					throw e;
+				} else {
+					info(e.getMessage());
+				}
+			}
 		}
 		db.updateAvailableDescriptors();
 	}

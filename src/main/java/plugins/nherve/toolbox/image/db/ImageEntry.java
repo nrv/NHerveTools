@@ -39,7 +39,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 	/** The classes. */
 	private Map<String, Double> classes;
 
-	private transient Exception error;
+	private transient Throwable error;
 
 	/** The file. */
 	private String file;
@@ -128,7 +128,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 		return classes;
 	}
 
-	public Exception getError() {
+	public Throwable getError() {
 		return error;
 	}
 
@@ -306,7 +306,7 @@ public class ImageEntry<T extends SegmentableImage> implements Segmentable {
 		this.classes = classes;
 	}
 
-	public void setError(Exception error) {
+	public void setError(Throwable error) {
 		this.error = error;
 	}
 

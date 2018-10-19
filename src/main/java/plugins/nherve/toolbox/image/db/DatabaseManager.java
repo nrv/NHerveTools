@@ -70,7 +70,7 @@ public class DatabaseManager<T extends SegmentableImage> extends Algorithm {
 		if (headersOnly) {
 			ptv.loadHeaders();
 		} else {
-			ptv.load();
+			ptv.load(false);
 		}
 		ImageDatabase<T> db = ptv.getDb();
 		db.setRootDirectory(conf.getRoot());

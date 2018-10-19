@@ -59,7 +59,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 
 			while (!readyToDumpHeaders && running) {
 				try {
-					Thread.sleep(getPartialDumpSleep());
+					Thread.sleep(getPartialDumpSleep() / 10);
 				} catch (InterruptedException e) {
 					// ignore
 				}
@@ -181,7 +181,7 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 				}
 				readyToDumpHeaders = true;
 				return 0;
-			} catch (Exception error) {
+			} catch (Throwable error) {
 				e.setError(error);
 				return 1;
 			}
