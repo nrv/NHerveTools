@@ -198,7 +198,9 @@ public class ImageDatabaseIndexer<T extends SegmentableImage> extends Algorithm 
 			}
 			if (sbi == null) {
 				sbi = e.getImage();
-				sbi.setName(e.getFile());
+				if (sbi != null) {
+					sbi.setName(e.getFile());
+				}
 			}
 		}
 
