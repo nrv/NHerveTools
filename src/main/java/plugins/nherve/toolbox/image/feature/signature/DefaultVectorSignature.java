@@ -32,7 +32,7 @@ public abstract class DefaultVectorSignature implements VectorSignature {
 	public final static int DENSE_VECTOR_SIGNATURE = 1;
 
 	/** The Constant df. */
-	private final static DecimalFormat df = new DecimalFormat("0.000");
+	protected final static DecimalFormat df = new DecimalFormat("0.000");
 
 	/** The Constant SPARSE_VECTOR_SIGNATURE. */
 	public final static int SPARSE_VECTOR_SIGNATURE = 2;

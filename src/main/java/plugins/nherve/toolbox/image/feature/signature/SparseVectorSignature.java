@@ -243,4 +243,24 @@ public class SparseVectorSignature extends DefaultVectorSignature {
 		size = s;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (int d : data.keySet()) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append("  ");
+			}
+			sb.append(d + ":" + df.format(data.get(d)));
+		}
+
+		try {
+			return "SparseVectorSignature [size=" + size + ", sum=" + df.format(sum()) + "] " + sb.toString();
+		} catch (SignatureException e) {
+			return e.getClass().getName() + " : " + e.getMessage();
+		}
+	}
+
 }
