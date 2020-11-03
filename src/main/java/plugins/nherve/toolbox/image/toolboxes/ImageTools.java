@@ -80,8 +80,8 @@ public class ImageTools {
 		double hr = (double) h / (double) original.getHeight();
 		double fr = Math.max(wr, hr);
 		if (fr > 1) {
-			int nw = (int) (fr * original.getWidth());
-			int nh = (int) (fr * original.getHeight());
+			int nw = (int) Math.ceil(fr * original.getWidth());
+			int nh = (int) Math.ceil(fr * original.getHeight());
 			original = resize(original, nw, nh, true);
 		}
 
