@@ -50,9 +50,13 @@ public class SparseVectorSignature extends DefaultVectorSignature {
 	 *            the size
 	 */
 	public SparseVectorSignature(int size) {
+		this(size, new TreeMap<Integer, Double>());
+	}
+	
+	public SparseVectorSignature(int size, Map<Integer, Double> data) {
 		super();
 		this.size = size;
-		data = new TreeMap<Integer, Double>();
+		this.data = data;
 	}
 
 	// public SparseVectorSignature() {
