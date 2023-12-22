@@ -1,4 +1,4 @@
 NHerveTools
 ===========
 
-Some utility classes, independent of any library
+Some utility classes, independent of any library.
